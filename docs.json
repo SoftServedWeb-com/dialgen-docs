@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "name": "Dialgen",
+  "name": "Dialgen Documentation",
   "theme": "mint",
   "colors": {
     "primary": "#0D9488",
