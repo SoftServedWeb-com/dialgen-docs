@@ -1,0 +1,45 @@
+---
+title: "Changelog"
+description: "Track changes and updates across Dialgen versions."
+---
+
+This changelog provides a detailed overview of updates, new features, improvements, and bug fixes across different versions of Dialgen.
+
+## Version 1.1.0 (Upcoming)
+
+### New Features
+
+*   **Custom Voice Cloning (Enterprise):** Ability to upload voice samples for unique agent voices.
+*   **Advanced Analytics Dashboard:** Enhanced metrics and visualization for call campaigns.
+
+### Improvements
+
+*   **Optimized Call Handling:** Improved stability and performance for high-volume batches.
+*   **Webhook Reliability:** Enhanced retry mechanisms for webhook notifications.
+
+### Bug Fixes
+
+*   Resolved an issue with `maxCallsPerSecond` not applying correctly in certain scenarios.
+*   Fixed minor display bugs in the dashboard's real-time call status.
+
+## Version 1.0.0 (Initial Release)
+
+### New Features
+
+*   **Single Call Initiation:** `POST /api/private/call/dial` endpoint.
+*   **Batch Campaign Creation:** `POST /api/v1/batch` endpoint.
+*   **Call Status Monitoring:** `GET /api/v1/status/call/:callId` and `GET /api/v1/status/batch/:batchId`.
+*   **Batch Statistics:** `GET /api/v1/batch?batchId=`.
+*   **Call Metrics Retrieval:** `GET /api/private/call/get-metric`.
+*   **Agent Management:** Basic creation and configuration of AI agents.
+*   **Dashboard:** Overview of active calls, lead conversions, and daily call duration.
+
+### Improvements
+
+*   Initial API infrastructure for scalable voice AI.
+*   Comprehensive error handling and response codes.
+
+### Bug Fixes
+
+*   N/A (Initial Release)
+

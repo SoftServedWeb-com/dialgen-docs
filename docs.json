@@ -23,7 +23,8 @@
           {
             "group": "Core Concepts",
             "pages": [
-              "development"
+              "development",
+              "essentials/dashboard-features"
             ]
           }
         ]
@@ -51,6 +52,17 @@
               "api-reference/endpoint/create-batch",
               "api-reference/endpoint/get-batch-status",
               "api-reference/endpoint/get-batch-stats"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Updates",
+            "pages": [
+              "changelog"
             ]
           }
         ]
