@@ -1,0 +1,27 @@
+---
+title: "Get Single Call Status"
+description: "Retrieves the live status of an individual call."
+---
+
+Retrieves the live status of an individual call. This is the primary endpoint for tracking a single call's progress from `SCHEDULED` to `COMPLETED`.
+
+*   **Endpoint:** `GET /api/v1/status/call/:callId`
+*   **Method:** `GET`
+*   **URL Parameters:**
+    *   `callId` (string, required): The ID returned from the `POST /api/private/call/dial` endpoint.
+*   **Success Response (200 OK):**
+
+    ```json
+    {
+      "callId": "call_clxabc123...",
+      "status": "ONGOING",
+      "startTime": "2025-11-15T14:30:01.123Z",
+      "phoneNumber": "+15551234567",
+      "contactId": "contact_clx789ghi...",
+      "batchId": null,
+      "error": null,
+      "duration": null,
+      "recordingUrl": null
+    }
+    ```
+    *   **Status Enum:** `SCHEDULED`, `ONGOING`, `COMPLETED`, `MISSED`, `FAILED`

@@ -1,0 +1,30 @@
+---
+title: "Get Batch Statistics (Overall Progress)"
+description: "Retrieves high-level *statistics* for a batch."
+---
+
+Retrieves high-level *statistics* for a batch. This is a very lightweight call to check the overall progress of your campaign.
+
+*   **Endpoint:** `GET /api/v1/batch`
+*   **Method:** `GET`
+*   **Query Parameters:**
+    *   `batchId` (string, required): The ID returned from `POST /api/v1/batch`.
+*   **Example Request:** `GET /api/v1/batch?batchId=batch_1678886400...`
+*   **Success Response (200 OK):**
+
+    ```json
+    {
+      "batchId": "batch_1678886400_agent_clx123...",
+      "status": "processing",
+      "statistics": {
+        "total": 1000,
+        "processed": 150,
+        "succeeded": 95,
+        "failed": 5,
+        "pending": 850,
+        "percentComplete": 15
+      },
+      "createdAt": "2025-11-15T14:30:00.123Z"
+    }
+    ```
+    *   **Status Enum:** `ingesting`, `pending`, `processing`, `completed`

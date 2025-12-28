@@ -1,33 +1,51 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API Introduction"
+description: "Welcome to the Dialgen API documentation. Our API allows you to programmatically initiate and monitor AI-powered voice calls, either one at a time or in high-volume batches."
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## API Base URL
 
-## Welcome
+All API endpoints are relative to the following base URL:
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+```bash
+https://sa.dialgen.ai
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API requests must be authenticated using a Bearer Token. Pass your API key in the `Authorization` header:
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+```bash
+Authorization: Bearer <YOUR_API_KEY>
 ```
+
+## Response Formats
+
+The API uses standard HTTP status codes to indicate the success or failure of a request. All response bodies are returned in JSON format.
+
+| Status Code | Description |
+| :--- | :--- |
+| `200 OK` | Request succeeded |
+| `202 Accepted` | Request accepted for processing (used for batches) |
+| `400 Bad Request` | Missing or invalid fields/parameters |
+| `401 Unauthorized` | Missing or invalid API key |
+| `402 Payment Required` | Insufficient call minutes/credits |
+| `404 Not Found` | The requested resource was not found |
+| `409 Conflict` | A call is already in progress for this contact |
+| `500 Internal Server Error` | An unexpected server error occurred |
+
+## Best Practices
+
+### Rate Limiting & Throttling
+
+- **Default Rate**: 10 calls per second (adjustable via `maxCallsPerSecond` in batch options).
+- **Recommendation**: Start with lower rates (5-10 CPS) and scale up based on your telephony provider's limits.
+
+### Webhooks
+
+For a fully automated workflow, you can provide a webhook URL when creating a batch or initiating a call.
+
+- **Idempotency**: Your webhook endpoints should handle duplicate calls gracefully.
+- **Authentication**: Secure your webhook endpoints with authentication tokens.
+- **Timeout**: Respond to webhook calls within 5 seconds to avoid retries.
+- **Retry Logic**: We retry failed webhook calls up to 3 times with exponential backoff.

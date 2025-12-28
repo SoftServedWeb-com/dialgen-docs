@@ -1,0 +1,83 @@
+---
+title: "Start a Single Call"
+description: "Initiates a single outbound call immediately."
+---
+
+Initiates a single outbound call immediately.
+
+*   **Endpoint:** `POST /api/private/call/dial`
+*   **Method:** `POST`
+*   **Request Body:**
+
+    ```json
+    {
+      "to": "+1234567890",
+      "agentConfigId": "agent_123",
+      "userId": "user_789",
+      "contactId": "contact_101",
+      "callerDetails": {
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "company": "Example Inc.",
+        "metadata": {
+          "customField": "value"
+        }
+      },
+      "statusCallBackUrl": "https://api.your-crm.com/webhook/dialgen/call-complete"
+    }
+    ```
+    *   `to` (string, required): The E.164 formatted phone number to dial.
+    *   `agentConfigId` (string, required): The ID of the agent to use.
+    *   `userId` (string, required): The ID of the user owning the agent.
+    *   `contactId` (string, optional): Provide if the contact already exists.
+    *   `callerDetails` (object, optional): If `contactId` is not provided, this object is used to create/update the contact.
+    *   `statusCallBackUrl` (string, optional): The URL to send the call-status callback to. When the call completes and summary is generated, a POST request will be sent to this URL with the following payload:
+
+        ```json
+        {
+          "success": true,
+          "callData": {
+            "id": "call_123",
+            "contactId": "contact_456",
+            "agentId": "agent_789",
+            "callSid": "CA...",
+            "batchId": "",
+            "direction": "OUTBOUND",
+            "status": "COMPLETED",
+            "startTime": "2024-01-01T12:00:00.000Z",
+            "endTime": "2024-01-01T12:05:00.000Z",
+            "duration": 300,
+            "phoneNumber": "+1234567890",
+            "contactName": "John Doe",
+            "transcription": [...],
+            "recordingUrl": "https://...",
+            "summary": "Call summary text...",
+            "metricJson": { "metric1": "value1", ... },
+            "createdAt": "2024-01-01T12:00:00.000Z",
+            "callDate": "2024-01-01T12:00:00.000Z"
+          },
+          "metricSchema": { ... }
+        }
+        ```
+
+*   **Success Response (200 OK):**
+    Returns the `callId` which you must use to track the call's status.
+
+    ```json
+    {
+      "message": "Call initiated successfully",
+      "callId": "call_clxabc123...",
+      "contactId": "contact_clx789ghi...",
+      "status": "ONGOING"
+    }
+    ```
+
+*   **Error Response (409 Conflict):**
+    Returned if a call is already in progress for this contact.
+
+    ```json
+    {
+      "message": "Call already in progress for this contact",
+      "callId": "call_clxprev456..."
+    }
+    ```
