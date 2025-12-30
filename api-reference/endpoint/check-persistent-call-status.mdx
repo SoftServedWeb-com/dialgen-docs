@@ -1,0 +1,26 @@
+---
+title: "Persistent Call Status"
+description: "Retrieves the status of a particular call from long-term storage."
+---
+
+Use this endpoint to query the status of a particular call after it has been removed from the live memory cache (which happens after 30 days).
+
+*   **Endpoint:** `GET /api/v1/call/check-status`
+*   **Method:** `GET`
+*   **Query Parameters:**
+    *   `callId` (string, required): The call identifier.
+
+*   **Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "callId": "call_123...",
+  "status": "COMPLETED",
+  "startTime": "2024-01-15T10:00:00.000Z",
+  "endTime": "2024-01-15T10:05:00.000Z",
+  "duration": 300,
+  "phoneNumber": "+1234567890"
+}
+```
+

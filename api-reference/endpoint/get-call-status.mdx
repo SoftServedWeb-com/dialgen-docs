@@ -1,14 +1,15 @@
 ---
-title: "Get Single Call Status"
-description: "Retrieves the live status of an individual call."
+title: "Get Live Call Status"
+description: "Retrieves the live status of an individual call from the memory cache."
 ---
 
-Retrieves the live status of an individual call. This is the primary endpoint for tracking a single call's progress from `SCHEDULED` to `COMPLETED`.
+Retrieves the live status of an individual call from the memory cache (Redis). This is the primary endpoint for tracking a single call's progress from `SCHEDULED` to `COMPLETED` within **30 days** of its creation.
 
-*   **Endpoint:** `GET /api/v1/status/call/:callId`
+*   **Endpoint:** `GET /api/v1/status/call`
 *   **Method:** `GET`
-*   **URL Parameters:**
-    *   `callId` (string, required): The ID returned from the `POST /api/private/call/dial` endpoint.
+*   **Query Parameters:**
+    *   `callId` (string, required): The ID returned from the `POST /api/v1/call/dial` endpoint.
+*   **Retention**: Data is available for **30 days**. After 30 days, please use the [Persistent Call Status](/api-reference/endpoint/check-persistent-call-status) endpoint.
 *   **Success Response (200 OK):**
 
     ```json

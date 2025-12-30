@@ -43,7 +43,9 @@
             "pages": [
               "api-reference/endpoint/dial-single",
               "api-reference/endpoint/get-call-status",
-              "api-reference/endpoint/get-call-metrics"
+              "api-reference/endpoint/check-persistent-call-status",
+              "api-reference/endpoint/get-call-metrics",
+              "api-reference/endpoint/create-summary"
             ]
           },
           {
@@ -51,7 +53,9 @@
             "pages": [
               "api-reference/endpoint/create-batch",
               "api-reference/endpoint/get-batch-status",
-              "api-reference/endpoint/get-batch-stats"
+              "api-reference/endpoint/get-batch-stats",
+              "api-reference/endpoint/batch-list",
+              "api-reference/endpoint/cancel-batch"
             ]
           }
         ]

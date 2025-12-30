@@ -5,7 +5,11 @@ description: "Retrieves call metrics and analytics data after a call has complet
 
 Retrieves call metrics and analytics data after a call has completed.
 
-*   **Endpoint:** `GET /api/private/call/get-metric`
+<Info>
+  The `userId` query parameter must match the user ID associated with your API key. If you are using an API key, this is verified automatically.
+</Info>
+
+*   **Endpoint:** `GET /api/v1/call/get-metric`
 *   **Method:** `GET`
 *   **Query Parameters**:
     *   `callId` (string, required): The call identifier.

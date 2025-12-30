@@ -19,6 +19,12 @@ All API requests must be authenticated using a Bearer Token. Pass your API key i
 Authorization: Bearer <YOUR_API_KEY>
 ```
 
+<Info>
+  **Important Note on `userId`**
+  
+  All endpoints implicitly require `userId` which is derived from your API Key. While some endpoints may accept it as an optional parameter for verification, the system primarily uses the authenticated user's ID tied to the provided Bearer Token.
+</Info>
+
 ## Response Formats
 
 The API uses standard HTTP status codes to indicate the success or failure of a request. All response bodies are returned in JSON format.

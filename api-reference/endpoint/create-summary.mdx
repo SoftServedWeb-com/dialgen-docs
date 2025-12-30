@@ -1,0 +1,31 @@
+---
+title: "Create Call Summary"
+description: "Generates a summary and metrics for a completed call based on its transcription."
+---
+
+Generates a summary and metrics for a completed call based on its transcription. This endpoint is idempotent; if a summary already exists, it will not be regenerated.
+
+*   **Endpoint:** `POST /api/v1/call/create-summary`
+*   **Method:** `POST`
+*   **Request Body:**
+
+```json
+{
+  "callId": "call_12345...",
+  "transcription": [
+    {"role": "assistant", "content": "Hello, how can I help you today?"},
+    {"role": "user", "content": "I'm interested in your pricing plans."}
+  ]
+}
+```
+
+*   **Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "summary": 150,
+  "customMetricsProcessed": 3
+}
+```
+

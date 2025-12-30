@@ -5,7 +5,11 @@ description: "Initiates a single outbound call immediately."
 
 Initiates a single outbound call immediately.
 
-*   **Endpoint:** `POST /api/private/call/dial`
+<Info>
+  The `userId` field in the request body is optional. If provided, it must match the user ID associated with your API key. The system will automatically use your authenticated user ID if this field is omitted.
+</Info>
+
+*   **Endpoint:** `POST /api/v1/call/dial`
 *   **Method:** `POST`
 *   **Request Body:**
 

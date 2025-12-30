@@ -1,14 +1,15 @@
 ---
-title: "Get Batch Live Call Status (Detailed)"
-description: "Retrieves the live, individual status of *every call* within a batch."
+title: "Get Live Batch Status (Detailed)"
+description: "Retrieves the live, individual status of every call within a batch from the memory cache."
 ---
 
-Retrieves the live, individual status of *every call* within a batch. This is the primary endpoint for monitoring a campaign in real-time.
+Retrieves the live, individual status of *every call* within a batch from the memory cache (Redis). This is the primary endpoint for monitoring a campaign in real-time within **30 days** of its creation.
 
-*   **Endpoint:** `GET /api/v1/status/batch/:batchId`
+*   **Endpoint:** `GET /api/v1/status/batch`
 *   **Method:** `GET`
-*   **URL Parameters:**
+*   **Query Parameters:**
     *   `batchId` (string, required): The ID returned from `POST /api/v1/batch`.
+*   **Retention**: Data is available for **30 days**. After 30 days, please use the [Batch Statistics](/api-reference/endpoint/get-batch-stats) endpoint for persistent records.
 *   **Success Response (200 OK):**
     Returns a `calls` array containing the status object for every call in the batch.
 

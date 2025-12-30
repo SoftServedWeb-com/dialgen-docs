@@ -1,0 +1,24 @@
+---
+title: "Cancel Batch"
+description: "Cancels a running or pending batch."
+---
+
+Cancels a running or pending batch and removes all pending calls from the processing queue.
+
+*   **Endpoint:** `POST /api/v1/batch/cancel`
+*   **Method:** `POST`
+*   **Query Parameters:**
+    *   `batchId` (string, required): The ID of the batch to cancel.
+
+*   **Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "batchId": "batch_123...",
+  "status": "cancelled",
+  "cancelledJobs": 50,
+  "message": "Batch processing cancelled successfully"
+}
+```
+

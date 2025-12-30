@@ -1,15 +1,15 @@
 ---
 title: "Get Batch Statistics (Overall Progress)"
-description: "Retrieves high-level *statistics* for a batch."
+description: "Retrieves high-level statistics for a batch from persistent storage."
 ---
 
-Retrieves high-level *statistics* for a batch. This is a very lightweight call to check the overall progress of your campaign.
+Retrieves high-level *statistics* for a batch. This is a lightweight call to check the overall progress of your campaign and remains available after the live status has expired from the cache.
 
-*   **Endpoint:** `GET /api/v1/batch`
+*   **Endpoint:** `GET /api/v1/batch/check-status`
 *   **Method:** `GET`
 *   **Query Parameters:**
     *   `batchId` (string, required): The ID returned from `POST /api/v1/batch`.
-*   **Example Request:** `GET /api/v1/batch?batchId=batch_1678886400...`
+*   **Example Request:** `GET /api/v1/batch/check-status?batchId=batch_1678886400...`
 *   **Success Response (200 OK):**
 
     ```json

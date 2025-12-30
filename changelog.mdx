@@ -5,7 +5,28 @@ description: "Track changes and updates across Dialgen versions."
 
 This changelog provides a detailed overview of updates, new features, improvements, and bug fixes across different versions of Dialgen.
 
-## Version 1.1.0 (Upcoming)
+## Version 1.2.0 (December 30, 2025)
+
+### API & Core Updates
+
+*   **API Path Refactoring:** All private endpoints have been moved to the versioned `/api/v1/` path for consistency and future-proofing.
+    *   `/api/private/call/dial` → `/api/v1/call/dial`
+    *   `/api/private/call/get-metric` → `/api/v1/call/get-metric`
+*   **Dual-Layer Status System:** Introduced a high-performance live status system using memory cache (Redis) with a 30-day retention period.
+    *   New endpoints for live tracking: `GET /api/v1/status/call` and `GET /api/v1/status/batch`.
+*   **New Management Endpoints:**
+    *   **List All Batches:** `GET /api/v1/batch/list` – View all campaigns associated with your account.
+    *   **Create Call Summary:** `POST /api/v1/call/create-summary` – Manually trigger summary and metric generation.
+    *   **Cancel Batch:** `POST /api/v1/batch/cancel` – Stop running or pending campaigns immediately.
+    *   **System Health:** `GET /api/v1/health` – Monitor backend connectivity.
+*   **Persistent Status:** Added `GET /api/v1/call/check-status` and `GET /api/v1/batch/check-status` for retrieving historical data after the 30-day live cache expires.
+
+### Improvements
+
+*   **Auth Transparency:** Documentation now features highlighted `<Info>` callouts clearly explaining that `userId` is implicitly derived from the API Key Bearer Token across all endpoints.
+*   **Documentation Revamp:** Updated all API reference pages to match the new versioned paths, added missing management endpoints, and enhanced monitoring workflows.
+
+## Version 1.1.0
 
 ### New Features
 
@@ -26,20 +47,10 @@ This changelog provides a detailed overview of updates, new features, improvemen
 
 ### New Features
 
-*   **Single Call Initiation:** `POST /api/private/call/dial` endpoint.
+*   **Single Call Initiation:** Initial `POST /api/private/call/dial` endpoint.
 *   **Batch Campaign Creation:** `POST /api/v1/batch` endpoint.
-*   **Call Status Monitoring:** `GET /api/v1/status/call/:callId` and `GET /api/v1/status/batch/:batchId`.
+*   **Call Status Monitoring:** Initial monitoring endpoints.
 *   **Batch Statistics:** `GET /api/v1/batch?batchId=`.
 *   **Call Metrics Retrieval:** `GET /api/private/call/get-metric`.
 *   **Agent Management:** Basic creation and configuration of AI agents.
 *   **Dashboard:** Overview of active calls, lead conversions, and daily call duration.
-
-### Improvements
-
-*   Initial API infrastructure for scalable voice AI.
-*   Comprehensive error handling and response codes.
-
-### Bug Fixes
-
-*   N/A (Initial Release)
-
