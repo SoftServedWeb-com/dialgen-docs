@@ -19,10 +19,12 @@ All API requests must be authenticated using a Bearer Token. Pass your API key i
 Authorization: Bearer <YOUR_API_KEY>
 ```
 
+You can obtain your API key from the [Dialgen API Keys dashboard](https://sa.dialgen.ai/api-keys).
+
 <Info>
   **Important Note on `userId`**
   
-  All endpoints implicitly require `userId` which is derived from your API Key. While some endpoints may accept it as an optional parameter for verification, the system primarily uses the authenticated user's ID tied to the provided Bearer Token.
+  All endpoints should pass in the `userId` in the request body or query parameters. You can find your `userId` in the [sa.dialgen.ai](https://sa.dialgen.ai) dashboard.
 </Info>
 
 ## Response Formats

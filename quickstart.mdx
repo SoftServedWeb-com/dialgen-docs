@@ -9,20 +9,20 @@ This guide will help you make your first AI-powered voice call using the Dialgen
 
 ### Step 1: Obtain Your API Key
 
-All requests to the Dialgen API require authentication with a Bearer Token. You can generate your API key from your Dialgen dashboard. Once generated, keep it secure.
+All requests to the Dialgen API require authentication with a Bearer Token. You can generate and manage your API keys at [sa.dialgen.ai/api-keys](https://sa.dialgen.ai/api-keys). Once generated, keep it secure.
 
 ### Step 2: Make Your First Call
 
-Use the `Start a Single Call` endpoint to initiate an outbound call. Replace `YOUR_API_KEY` with your actual API key and adjust the `to`, `agentConfigId`, and `userId` fields as necessary.
+Use the `Start a Single Call` endpoint to initiate an outbound call. Replace `YOUR_API_KEY` with your actual API key and adjust the `to`, `agentConfigId`, and `userId` fields as necessary. You can find your `userId` in the [sa.dialgen.ai](https://sa.dialgen.ai) dashboard.
 
 ```bash
-curl -X POST https://sa.dialgen.ai/api/private/call/dial \
+curl -X POST https://sa.dialgen.ai/api/v1/call/dial \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{ 
     "to": "+1234567890", 
     "agentConfigId": "agent_123", 
-    "userId": "user_789", 
+    "userId": "YOUR_USER_ID", 
     "callerDetails": {
       "name": "John Doe",
       "email": "john.doe@example.com"

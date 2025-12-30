@@ -6,7 +6,7 @@ description: "Submits a list of contacts to be called as a new campaign."
 Submits a list of contacts to be called as a new campaign. The server accepts the job and begins ingesting the contacts in the background.
 
 <Info>
-  The `userId` field in the request body is optional. If provided, it must match the user ID associated with your API key. The system will automatically use your authenticated user ID if this field is omitted.
+  All endpoints should pass in the `userId` in the request body. You can find your `userId` in the [sa.dialgen.ai](https://sa.dialgen.ai) dashboard.
 </Info>
 
 *   **Endpoint:** `POST /api/v1/batch`
