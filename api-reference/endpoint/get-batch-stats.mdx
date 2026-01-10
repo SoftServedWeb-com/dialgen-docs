@@ -9,22 +9,47 @@ Retrieves high-level *statistics* for a batch. This is a lightweight call to che
 *   **Method:** `GET`
 *   **Query Parameters:**
     *   `batchId` (string, required): The ID returned from `POST /api/v1/batch`.
-*   **Example Request:** `GET /api/v1/batch/check-status?batchId=batch_1678886400...`
+    *   `limit` (string, optional): Number of recent calls to return. Defaults to `10`. Use `all` or `-1` to return all calls in the batch.
+*   **Example Request:** `GET /api/v1/batch/check-status?batchId=batch_1678886400...&limit=20`
 *   **Success Response (200 OK):**
 
     ```json
     {
-      "batchId": "batch_1678886400_agent_clx123...",
-      "status": "processing",
+      "batchId": "batch_1767385567962_...",
+      "status": "completed",
+      "priority": 5,
       "statistics": {
-        "total": 1000,
-        "processed": 150,
-        "succeeded": 95,
-        "failed": 5,
-        "pending": 850,
-        "percentComplete": 15
+        "total": 1,
+        "processed": 1,
+        "succeeded": 1,
+        "failed": 0,
+        "pending": 0,
+        "percentComplete": 100,
+        "successRate": 100
       },
-      "createdAt": "2025-11-15T14:30:00.123Z"
+      "performance": {
+        "callsPerSecond": 0.01,
+        "estimatedTimeRemaining": null,
+        "elapsedTime": 72
+      },
+      "timestamps": {
+        "createdAt": "2026-01-02T20:27:34.060Z",
+        "startedAt": "2026-01-02T20:27:34.059Z",
+        "completedAt": "2026-01-02T20:28:46.214Z"
+      },
+      "recentCalls": [
+        {
+          "id": "cmjxbsai4001...",
+          "callSid": "CA123...",
+          "status": "COMPLETED",
+          "duration": 46,
+          "createdAt": "2026-01-02T20:27:34.060Z",
+          "phoneNumber": "+1234567890",
+          "contactName": "John Doe"
+        }
+      ],
+      "webhooks": null,
+      "agentId": "cmghxkg2p...",
+      "userId": "user_33m..."
     }
     ```
-    *   **Status Enum:** `ingesting`, `pending`, `processing`, `completed`

@@ -20,6 +20,7 @@ This changelog provides a detailed overview of updates, new features, improvemen
     *   **Cancel Batch:** `POST /api/v1/batch/cancel` – Stop running or pending campaigns immediately.
     *   **System Health:** `GET /api/v1/health` – Monitor backend connectivity.
 *   **Persistent Status:** Added `GET /api/v1/call/check-status` and `GET /api/v1/batch/check-status` for retrieving historical data after the 30-day live cache expires.
+*   **Enhanced Batch Monitoring:** The `check-status` endpoint for batches now queries the database directly for accurate historical reporting and supports a `limit` parameter to control the number of recent calls returned.
 
 ### Improvements
 

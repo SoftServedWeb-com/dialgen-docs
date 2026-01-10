@@ -15,12 +15,30 @@ Use this endpoint to query the status of a particular call after it has been rem
 ```json
 {
   "success": true,
-  "callId": "call_123...",
-  "status": "COMPLETED",
-  "startTime": "2024-01-15T10:00:00.000Z",
-  "endTime": "2024-01-15T10:05:00.000Z",
-  "duration": 300,
-  "phoneNumber": "+1234567890"
+  "data": {
+    "id": "cmk3n7v8l0001k004w0f0b3b1",
+    "status": "COMPLETED",
+    "direction": "OUTBOUND",
+    "duration": 35,
+    "createdAt": "2026-01-07T06:34:13.605Z",
+    "endedAt": "2026-01-07T06:34:51.871Z",
+    "contact": {
+      "name": "John Doe",
+      "phoneNumber": "+1234567890"
+    },
+    "agent": "Agent Name",
+    "recordingUrl": "https://...",
+    "transcription": [
+      {
+        "role": "assistant",
+        "content": "..."
+      },
+      {
+        "role": "user",
+        "content": "..."
+      }
+    ]
+  }
 }
 ```
 
