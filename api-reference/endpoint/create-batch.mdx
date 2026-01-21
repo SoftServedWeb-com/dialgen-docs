@@ -45,9 +45,9 @@ Submits a list of contacts to be called as a new campaign. The server accepts th
           "busyDelay": 300000
         },
         "webhooks": {
-          "onBatchComplete": "https://api.your-crm.com/webhook/dialgen/batch-complete",
+          {/* "onBatchComplete": "https://api.your-crm.com/webhook/dialgen/batch-complete", */}
           "onCallComplete": "https://api.your-crm.com/webhook/dialgen/call-complete",
-          "onBatchFailed": "https://api.your-crm.com/webhook/dialgen/batch-failed"
+          {/* "onBatchFailed": "https://api.your-crm.com/webhook/dialgen/batch-failed" */}
         },
         "tags": ["Q4_campaign", "high_priority"]
       }
@@ -72,7 +72,7 @@ Submits a list of contacts to be called as a new campaign. The server accepts th
     *   **`company`** (string, optional): Contact's company name.
     *   **`metadata`** (object, optional): Custom key-value pairs for additional contact information (e.g., lead score, account ID, custom fields).
 
-*   **`options`** (object, optional): Batch processing configuration.
+*   **`options`** (object, optional): Batch processing configuration. All fields within this object are optional and will use default values if not provided.
     *   **`priority`** (number, optional): Priority level from 1-10 (default: 5). Higher priority batches are processed first.
     *   **`scheduledStartTime`** (string, optional): ISO 8601 datetime string for scheduling the batch to start in the future. Must be a future time.
     *   **`timezone`** (string, optional): Timezone for scheduling (default: "UTC").
@@ -83,7 +83,7 @@ Submits a list of contacts to be called as a new campaign. The server accepts th
         *   **`busyDelay`** (number, optional): Delay in milliseconds before retrying a busy call (default: 300000 = 5 minutes).
     *   **`webhooks`** (object, optional): Webhook URLs for event notifications.
         *   **`onBatchComplete`** (string, optional): Called when the entire batch finishes processing.
-        *   **`onCallComplete`** (string, optional): Called after each individual call completes.
+        *   **`onCallComplete`** (string, optional): Called after each individual call completes. The payload sent to this URL matches the response format of the [Get Call Metrics](/api-reference/endpoint/get-call-metrics) endpoint.
         *   **`onBatchFailed`** (string, optional): Called if the batch fails.
     *   **`tags`** (array of strings, optional): Tags for filtering and grouping batches.
 
