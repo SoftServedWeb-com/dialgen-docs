@@ -39,7 +39,7 @@
             ]
           },
           {
-            "group": "Agent",
+            "group": "Agents",
             "pages": [
               "api-reference/endpoint/get-agent"
             ]
