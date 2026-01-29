@@ -39,6 +39,12 @@
             ]
           },
           {
+            "group": "Agents",
+            "pages": [
+              "api-reference/endpoint/get-agent"
+            ]
+          },
+          {
             "group": "Calls",
             "pages": [
               "api-reference/endpoint/dial-single",
