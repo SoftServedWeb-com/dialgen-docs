@@ -1,0 +1,41 @@
+---
+title: "Get Agent"
+description: "Retrieves details for a specific AI agent."
+---
+
+Retrieves the configuration and details for a specific AI agent. This includes basic information, active status, and metric configurations.
+
+*   **Endpoint:** `/api/v1/agent`
+*   **Method:** `GET`
+*   **Query Parameters:**
+    *   `agentId` (string, required): The unique identifier of the agent.
+    *   `userId` (string, optional): The user ID owning the agent. If provided, it must match the API key owner.
+*   **Success Response (200 OK):**
+
+    ```json
+    {
+      "id": "agent_clx123abc...",
+      "name": "Customer Support Agent",
+      "createdAt": "2025-10-01T10:00:00.000Z",
+      "updatedAt": "2025-10-05T14:30:00.000Z",
+      "type": "SUPPORT",
+      "isActive": true,
+      "basicDetails": {
+        "voice": "allie",
+        "language": "en-US"
+      },
+      "metricConfig": {
+        "enabled": true,
+        "customMetrics": []
+      },
+      "sipTrunkId": "sip_789"
+    }
+    ```
+
+### Error Responses
+
+*   **400 Bad Request**: Missing the required `agentId` query parameter.
+*   **401 Unauthorized**: Invalid or missing API key.
+*   **403 Forbidden**: The provided `userId` does not match the API key owner.
+*   **404 Not Found**: The specified agent was not found, or you do not have permission to access it.
+*   **500 Internal Server Error**: An unexpected error occurred on the server.
