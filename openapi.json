@@ -1,0 +1,1732 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Dialgen API",
+    "description": "Dialgen API allows you to programmatically initiate and monitor AI-powered voice calls, either one at a time or in high-volume batches.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Dialgen Support",
+      "url": "https://sa.dialgen.ai"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://sa.dialgen.ai",
+      "description": "Production server"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/agent": {
+      "get": {
+        "summary": "Get Agent",
+        "description": "Retrieves the configuration and details for a specific AI agent. This includes basic information, active status, and metric configurations.",
+        "operationId": "getAgent",
+        "tags": ["Agents"],
+        "parameters": [
+          {
+            "name": "agentId",
+            "in": "query",
+            "description": "The unique identifier of the agent",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "agent_clx123abc..."
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "The user ID owning the agent",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "user_clx456def..."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Agent"
+                },
+                "example": {
+                  "id": "agent_clx123abc...",
+                  "name": "Customer Support Agent",
+                  "createdAt": "2025-10-01T10:00:00.000Z",
+                  "updatedAt": "2025-10-05T14:30:00.000Z",
+                  "type": "OUTBOUND",
+                  "isActive": true,
+                  "basicDetails": {
+                    "dialId": "Dial2",
+                    "voiceId": "",
+                    "agent_name": "",
+                    "voiceSpeed": 0.7,
+                    "voiceGender": "male",
+                    "agentLanguage": "en"
+                  },
+                  "metricConfig": {
+                    "enabled": true,
+                    "customMetrics": []
+                  },
+                  "sipTrunkId": "sip_789"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/call/dial": {
+      "post": {
+        "summary": "Start a Single Call",
+        "description": "Initiates a single outbound call immediately. All endpoints should pass in the userId in the request body.",
+        "operationId": "dialSingle",
+        "tags": ["Calls"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DialSingleRequest"
+              },
+              "example": {
+                "to": "+1234567890",
+                "agentConfigId": "agent_123",
+                "userId": "user_789",
+                "contactId": "contact_101",
+                "callerDetails": {
+                  "name": "John Doe",
+                  "email": "john.doe@example.com",
+                  "company": "Example Inc.",
+                  "metadata": {
+                    "customField": "value"
+                  }
+                },
+                "statusCallBackUrl": "https://api.your-crm.com/webhook/dialgen/call-complete"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Call initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DialSingleResponse"
+                },
+                "example": {
+                  "message": "Call initiated successfully",
+                  "callId": "call_clxabc123...",
+                  "contactId": "contact_clx789ghi...",
+                  "status": "ONGOING"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "description": "Call already in progress for this contact",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "callId": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Call already in progress for this contact",
+                  "callId": "call_clxprev456..."
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/status/call": {
+      "get": {
+        "summary": "Get Live Call Status",
+        "description": "Retrieves the live status of an individual call from the memory cache (Redis). Data is available for 30 days.",
+        "operationId": "getCallStatus",
+        "tags": ["Calls"],
+        "parameters": [
+          {
+            "name": "callId",
+            "in": "query",
+            "description": "The ID returned from the POST /api/v1/call/dial endpoint",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "call_clxabc123..."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Call status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallStatus"
+                },
+                "example": {
+                  "callId": "call_clxabc123...",
+                  "status": "ONGOING",
+                  "startTime": "2025-11-15T14:30:01.123Z",
+                  "phoneNumber": "+15551234567",
+                  "contactId": "contact_clx789ghi...",
+                  "batchId": null,
+                  "error": null,
+                  "duration": null,
+                  "recordingUrl": null
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/call/check-status": {
+      "get": {
+        "summary": "Persistent Call Status",
+        "description": "Retrieves the status of a particular call from long-term storage. Use this endpoint after the call has been removed from the live memory cache (after 30 days).",
+        "operationId": "checkPersistentCallStatus",
+        "tags": ["Calls"],
+        "parameters": [
+          {
+            "name": "callId",
+            "in": "query",
+            "description": "The call identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "cmk3n7v8l0001k004w0f0b3b1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Persistent call status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersistentCallStatusResponse"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": "cmk3n7v8l0001k004w0f0b3b1",
+                    "status": "COMPLETED",
+                    "direction": "OUTBOUND",
+                    "duration": 35,
+                    "createdAt": "2026-01-07T06:34:13.605Z",
+                    "endedAt": "2026-01-07T06:34:51.871Z",
+                    "contact": {
+                      "name": "John Doe",
+                      "phoneNumber": "+1234567890"
+                    },
+                    "agent": "Agent Name",
+                    "recordingUrl": "https://...",
+                    "transcription": [
+                      {
+                        "role": "assistant",
+                        "content": "..."
+                      },
+                      {
+                        "role": "user",
+                        "content": "..."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/call/get-metric": {
+      "get": {
+        "summary": "Get Call Metrics",
+        "description": "Retrieves call metrics and analytics data after a call has completed.",
+        "operationId": "getCallMetrics",
+        "tags": ["Calls"],
+        "parameters": [
+          {
+            "name": "callId",
+            "in": "query",
+            "description": "The call identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "call_123"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "The user identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "user_456"
+            }
+          },
+          {
+            "name": "agentId",
+            "in": "query",
+            "description": "The agent identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "agent_789"
+            }
+          },
+          {
+            "name": "contactId",
+            "in": "query",
+            "description": "The contact identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "contact_123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Call metrics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallMetricsResponse"
+                },
+                "example": {
+                  "success": true,
+                  "callData": {
+                    "id": "call_123",
+                    "contactId": "contact_123",
+                    "agentId": "agent_456",
+                    "status": "COMPLETED",
+                    "startTime": "2024-01-15T10:00:00.000Z",
+                    "endTime": "2024-01-15T10:03:00.000Z",
+                    "duration": 180,
+                    "phoneNumber": "+1234567890",
+                    "contactName": "John Doe",
+                    "transcription": {},
+                    "summary": "Demo call completed successfully...",
+                    "metricJson": {
+                      "intent": "SALES_INQUIRY",
+                      "sentiment": "positive",
+                      "confidence": 0.95,
+                      "keyPoints": ["Interested in pricing", "Wants demo"],
+                      "customerSatisfaction": 5
+                    }
+                  },
+                  "metricSchema": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/call/create-summary": {
+      "post": {
+        "summary": "Create Call Summary",
+        "description": "Generates a summary and metrics for a completed call based on its transcription. This endpoint is idempotent; if a summary already exists, it will not be regenerated.",
+        "operationId": "createSummary",
+        "tags": ["Calls"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSummaryRequest"
+              },
+              "example": {
+                "callId": "call_12345...",
+                "transcription": [
+                  {
+                    "role": "assistant",
+                    "content": "Hello, how can I help you today?"
+                  },
+                  {
+                    "role": "user",
+                    "content": "I'm interested in your pricing plans."
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Summary created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSummaryResponse"
+                },
+                "example": {
+                  "success": true,
+                  "summary": 150,
+                  "customMetricsProcessed": 3
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/batch": {
+      "post": {
+        "summary": "Create a New Call Batch (Campaign)",
+        "description": "Submits a list of contacts to be called as a new campaign. The server accepts the job and begins ingesting the contacts in the background.",
+        "operationId": "createBatch",
+        "tags": ["Batches"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBatchRequest"
+              },
+              "example": {
+                "agentId": "agent_clx123abc...",
+                "userId": "user_clx456def...",
+                "contacts": [
+                  {
+                    "id": "contact_clx789xyz...",
+                    "phoneNumber": "+15551234567",
+                    "name": "Jane Doe",
+                    "email": "jane@example.com",
+                    "company": "Acme Corp",
+                    "metadata": {
+                      "lead_score": 80
+                    }
+                  },
+                  {
+                    "phoneNumber": "+15557654321",
+                    "name": "John Smith",
+                    "email": "john@example.com",
+                    "company": null,
+                    "metadata": {
+                      "account_id": "A123"
+                    }
+                  }
+                ],
+                "options": {
+                  "priority": 5,
+                  "scheduledStartTime": "2025-11-16T09:00:00.000Z",
+                  "timezone": "UTC",
+                  "maxCallsPerSecond": 10,
+                  "retryStrategy": {
+                    "maxAttempts": 3,
+                    "noAnswerDelay": 3600000,
+                    "busyDelay": 300000
+                  },
+                  "webhooks": {
+                    "onCallComplete": "https://api.your-crm.com/webhook/dialgen/call-complete"
+                  },
+                  "tags": ["Q4_campaign", "high_priority"]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Batch accepted and is being processed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBatchResponse"
+                },
+                "example": {
+                  "success": true,
+                  "batchId": "batch_1678886400_agent_clx123...",
+                  "status": "ingesting",
+                  "message": "Batch accepted and is being processed. Monitor the status link for updates.",
+                  "links": {
+                    "status": "https://sa.dialgen.ai/api/v1/batch/batch_1678886400_agent_clx123.../status",
+                    "dashboard": "https://sa.dialgen.ai/batch/monitor/batch_1678886400_agent_clx123..."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or scheduled time invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "validationFailed": {
+                    "value": {
+                      "error": "Validation failed",
+                      "code": "INVALID_REQUEST",
+                      "details": {
+                        "fieldErrors": {
+                          "contacts": ["At least one contact required"],
+                          "agentId": ["Agent ID is required"]
+                        }
+                      }
+                    }
+                  },
+                  "scheduledTimeInvalid": {
+                    "value": {
+                      "error": "Scheduled start time must be in the future"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "description": "Insufficient call minutes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object",
+                      "properties": {
+                        "estimatedMinutesRequired": {
+                          "type": "number"
+                        },
+                        "availableMinutes": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Insufficient call minutes",
+                  "code": "INSUFFICIENT_CREDITS",
+                  "message": "Estimated 2000 minutes required, but only 500 available",
+                  "details": {
+                    "estimatedMinutesRequired": 2000,
+                    "availableMinutes": 500
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Agent not found or inactive",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Agent not found or inactive",
+                  "code": "AGENT_NOT_FOUND",
+                  "message": "The specified agent does not exist, is inactive, or you do not have access to it"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/status/batch": {
+      "get": {
+        "summary": "Get Live Batch Status (Detailed)",
+        "description": "Retrieves the live, individual status of every call within a batch from the memory cache (Redis). Data is available for 30 days.",
+        "operationId": "getBatchStatus",
+        "tags": ["Batches"],
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "query",
+            "description": "The ID returned from POST /api/v1/batch",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "batch_1678886400_agent_clx123..."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Batch status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchStatusResponse"
+                },
+                "example": {
+                  "batchId": "batch_1678886400_agent_clx123...",
+                  "calls": [
+                    {
+                      "callId": "call_clxabc123...",
+                      "status": "COMPLETED",
+                      "startTime": "2025-11-15T14:31:02.456Z",
+                      "phoneNumber": "+15551234567",
+                      "error": null,
+                      "duration": 62,
+                      "recordingUrl": "https://s3..."
+                    },
+                    {
+                      "callId": "call_clxdef456...",
+                      "status": "ONGOING",
+                      "startTime": "2025-11-15T14:32:15.789Z",
+                      "phoneNumber": "+15557654321",
+                      "error": null,
+                      "duration": null,
+                      "recordingUrl": null
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/batch/check-status": {
+      "get": {
+        "summary": "Get Batch Statistics (Overall Progress)",
+        "description": "Retrieves high-level statistics for a batch from persistent storage. This is a lightweight call to check the overall progress of your campaign.",
+        "operationId": "getBatchStats",
+        "tags": ["Batches"],
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "query",
+            "description": "The ID returned from POST /api/v1/batch",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "batch_1678886400_agent_clx123..."
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of recent calls to return. Defaults to 10. Use 'all' or '-1' to return all calls in the batch.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "10",
+              "example": "20"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Batch statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchStatsResponse"
+                },
+                "example": {
+                  "batchId": "batch_1767385567962_...",
+                  "status": "completed",
+                  "priority": 5,
+                  "statistics": {
+                    "total": 1,
+                    "processed": 1,
+                    "succeeded": 1,
+                    "failed": 0,
+                    "pending": 0,
+                    "percentComplete": 100,
+                    "successRate": 100
+                  },
+                  "performance": {
+                    "callsPerSecond": 0.01,
+                    "estimatedTimeRemaining": null,
+                    "elapsedTime": 72
+                  },
+                  "timestamps": {
+                    "createdAt": "2026-01-02T20:27:34.060Z",
+                    "startedAt": "2026-01-02T20:27:34.059Z",
+                    "completedAt": "2026-01-02T20:28:46.214Z"
+                  },
+                  "recentCalls": [
+                    {
+                      "id": "cmjxbsai4001...",
+                      "callSid": "CA123...",
+                      "status": "COMPLETED",
+                      "duration": 46,
+                      "createdAt": "2026-01-02T20:27:34.060Z",
+                      "phoneNumber": "+1234567890",
+                      "contactName": "John Doe"
+                    }
+                  ],
+                  "webhooks": null,
+                  "agentId": "cmghxkg2p...",
+                  "userId": "user_33m..."
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/batch/list": {
+      "get": {
+        "summary": "List All Batches",
+        "description": "Retrieves a list of all call batches for the authenticated user, sorted by creation date (newest first).",
+        "operationId": "batchList",
+        "tags": ["Batches"],
+        "responses": {
+          "200": {
+            "description": "Batch list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BatchSummary"
+                  }
+                },
+                "example": [
+                  {
+                    "batchId": "batch_123...",
+                    "status": "processing",
+                    "total": 1000,
+                    "processed": 500,
+                    "succeeded": 450,
+                    "failed": 50,
+                    "percentComplete": 50,
+                    "createdAt": "2024-01-15T10:00:00.000Z",
+                    "agentId": "agent_abc...",
+                    "priority": 5
+                  }
+                ]
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/v1/batch/cancel": {
+      "post": {
+        "summary": "Cancel Batch",
+        "description": "Cancels a running or pending batch and removes all pending calls from the processing queue.",
+        "operationId": "cancelBatch",
+        "tags": ["Batches"],
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "query",
+            "description": "The ID of the batch to cancel",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "batch_123..."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Batch cancelled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelBatchResponse"
+                },
+                "example": {
+                  "success": true,
+                  "batchId": "batch_123...",
+                  "status": "cancelled",
+                  "cancelledJobs": 50,
+                  "message": "Batch processing cancelled successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Bearer token authentication. Obtain your API key from the Dialgen API Keys dashboard at https://sa.dialgen.ai/api-keys"
+      }
+    },
+    "schemas": {
+      "Agent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique agent identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Agent name"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Agent creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Agent last update timestamp"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["OUTBOUND", "INBOUND"],
+            "description": "Agent type"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the agent is active"
+          },
+          "basicDetails": {
+            "type": "object",
+            "properties": {
+              "dialId": {
+                "type": "string"
+              },
+              "voiceId": {
+                "type": "string"
+              },
+              "agent_name": {
+                "type": "string"
+              },
+              "voiceSpeed": {
+                "type": "number"
+              },
+              "voiceGender": {
+                "type": "string",
+                "enum": ["male", "female"]
+              },
+              "agentLanguage": {
+                "type": "string"
+              }
+            }
+          },
+          "metricConfig": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "customMetrics": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "sipTrunkId": {
+            "type": "string",
+            "description": "SIP trunk identifier"
+          }
+        }
+      },
+      "DialSingleRequest": {
+        "type": "object",
+        "required": ["to", "agentConfigId", "userId"],
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "The E.164 formatted phone number to dial",
+            "example": "+1234567890"
+          },
+          "agentConfigId": {
+            "type": "string",
+            "description": "The ID of the agent to use"
+          },
+          "userId": {
+            "type": "string",
+            "description": "The ID of the user owning the agent"
+          },
+          "contactId": {
+            "type": "string",
+            "description": "Provide if the contact already exists"
+          },
+          "callerDetails": {
+            "type": "object",
+            "description": "If contactId is not provided, this object is used to create/update the contact",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "company": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "statusCallBackUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "The URL to send the call-status callback to"
+          }
+        }
+      },
+      "DialSingleResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "callId": {
+            "type": "string",
+            "description": "The call identifier to track status"
+          },
+          "contactId": {
+            "type": "string",
+            "description": "The contact identifier"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ONGOING", "SCHEDULED", "COMPLETED", "MISSED", "FAILED"]
+          }
+        }
+      },
+      "CallStatus": {
+        "type": "object",
+        "properties": {
+          "callId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["SCHEDULED", "ONGOING", "COMPLETED", "MISSED", "FAILED"]
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "contactId": {
+            "type": "string"
+          },
+          "batchId": {
+            "type": "string",
+            "nullable": true
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "duration": {
+            "type": "number",
+            "nullable": true
+          },
+          "recordingUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PersistentCallStatusResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["SCHEDULED", "ONGOING", "COMPLETED", "MISSED", "FAILED"]
+              },
+              "direction": {
+                "type": "string",
+                "enum": ["OUTBOUND", "INBOUND"]
+              },
+              "duration": {
+                "type": "number"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "endedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "contact": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "type": "string"
+                  }
+                }
+              },
+              "agent": {
+                "type": "string"
+              },
+              "recordingUrl": {
+                "type": "string"
+              },
+              "transcription": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "type": "string",
+                      "enum": ["assistant", "user"]
+                    },
+                    "content": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CallMetricsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "callData": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "contactId": {
+                "type": "string"
+              },
+              "agentId": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "startTime": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "endTime": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "duration": {
+                "type": "number"
+              },
+              "phoneNumber": {
+                "type": "string"
+              },
+              "contactName": {
+                "type": "string"
+              },
+              "transcription": {
+                "type": "object"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "metricJson": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "metricSchema": {
+            "type": "object"
+          }
+        }
+      },
+      "CreateSummaryRequest": {
+        "type": "object",
+        "required": ["callId", "transcription"],
+        "properties": {
+          "callId": {
+            "type": "string"
+          },
+          "transcription": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "enum": ["assistant", "user"]
+                },
+                "content": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "summary": {
+            "type": "number"
+          },
+          "customMetricsProcessed": {
+            "type": "number"
+          }
+        }
+      },
+      "CreateBatchRequest": {
+        "type": "object",
+        "required": ["agentId", "userId", "contacts"],
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "The agent ID to use for the entire batch"
+          },
+          "userId": {
+            "type": "string",
+            "description": "The user ID owning the agent"
+          },
+          "contacts": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100000,
+            "items": {
+              "$ref": "#/components/schemas/Contact"
+            }
+          },
+          "options": {
+            "$ref": "#/components/schemas/BatchOptions"
+          }
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "required": ["phoneNumber"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "If the contact already exists in your database, provide the existing contact ID"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "minLength": 10,
+            "description": "E.164 formatted phone number"
+          },
+          "name": {
+            "type": "string",
+            "description": "Contact's name (defaults to 'Unknown')"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Contact's email address"
+          },
+          "company": {
+            "type": "string",
+            "description": "Contact's company name"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Custom key-value pairs for additional contact information"
+          }
+        }
+      },
+      "BatchOptions": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 5,
+            "description": "Priority level from 1-10. Higher priority batches are processed first"
+          },
+          "scheduledStartTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 datetime string for scheduling the batch to start in the future"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "UTC",
+            "description": "Timezone for scheduling"
+          },
+          "maxCallsPerSecond": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 30,
+            "default": 10,
+            "description": "Rate limiting for calls"
+          },
+          "retryStrategy": {
+            "$ref": "#/components/schemas/RetryStrategy"
+          },
+          "webhooks": {
+            "$ref": "#/components/schemas/Webhooks"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tags for filtering and grouping batches"
+          }
+        }
+      },
+      "RetryStrategy": {
+        "type": "object",
+        "properties": {
+          "maxAttempts": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5,
+            "default": 3,
+            "description": "Maximum retry attempts per contact"
+          },
+          "noAnswerDelay": {
+            "type": "number",
+            "default": 3600000,
+            "description": "Delay in milliseconds before retrying a no-answer call (default: 1 hour)"
+          },
+          "busyDelay": {
+            "type": "number",
+            "default": 300000,
+            "description": "Delay in milliseconds before retrying a busy call (default: 5 minutes)"
+          }
+        }
+      },
+      "Webhooks": {
+        "type": "object",
+        "properties": {
+          "onBatchComplete": {
+            "type": "string",
+            "format": "uri",
+            "description": "Called when the entire batch finishes processing"
+          },
+          "onCallComplete": {
+            "type": "string",
+            "format": "uri",
+            "description": "Called after each individual call completes"
+          },
+          "onBatchFailed": {
+            "type": "string",
+            "format": "uri",
+            "description": "Called if the batch fails"
+          }
+        }
+      },
+      "CreateBatchResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "batchId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ingesting", "scheduled", "pending", "processing", "completed"]
+          },
+          "message": {
+            "type": "string"
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "format": "uri"
+              },
+              "dashboard": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        }
+      },
+      "BatchStatusResponse": {
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string"
+          },
+          "calls": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "callId": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["SCHEDULED", "ONGOING", "COMPLETED", "MISSED", "FAILED"]
+                },
+                "startTime": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "phoneNumber": {
+                  "type": "string"
+                },
+                "error": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "duration": {
+                  "type": "number",
+                  "nullable": true
+                },
+                "recordingUrl": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "BatchStatsResponse": {
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ingesting", "scheduled", "pending", "processing", "completed", "cancelled"]
+          },
+          "priority": {
+            "type": "number"
+          },
+          "statistics": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "number"
+              },
+              "processed": {
+                "type": "number"
+              },
+              "succeeded": {
+                "type": "number"
+              },
+              "failed": {
+                "type": "number"
+              },
+              "pending": {
+                "type": "number"
+              },
+              "percentComplete": {
+                "type": "number"
+              },
+              "successRate": {
+                "type": "number"
+              }
+            }
+          },
+          "performance": {
+            "type": "object",
+            "properties": {
+              "callsPerSecond": {
+                "type": "number"
+              },
+              "estimatedTimeRemaining": {
+                "type": "number",
+                "nullable": true
+              },
+              "elapsedTime": {
+                "type": "number"
+              }
+            }
+          },
+          "timestamps": {
+            "type": "object",
+            "properties": {
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "startedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "completedAt": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              }
+            }
+          },
+          "recentCalls": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "callSid": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "duration": {
+                  "type": "number"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "phoneNumber": {
+                  "type": "string"
+                },
+                "contactName": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "webhooks": {
+            "type": "object",
+            "nullable": true
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "BatchSummary": {
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ingesting", "scheduled", "pending", "processing", "completed", "cancelled"]
+          },
+          "total": {
+            "type": "number"
+          },
+          "processed": {
+            "type": "number"
+          },
+          "succeeded": {
+            "type": "number"
+          },
+          "failed": {
+            "type": "number"
+          },
+          "percentComplete": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "number"
+          }
+        }
+      },
+      "CancelBatchResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "batchId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "cancelledJobs": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Missing or invalid fields/parameters",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Bad Request",
+              "message": "Missing required parameter"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid API key",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Unauthorized",
+              "message": "Invalid or missing API key"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "The provided userId does not match the API key owner",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Forbidden",
+              "message": "Access denied"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The requested resource was not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Not Found",
+              "message": "Resource not found"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "An unexpected server error occurred",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Internal Server Error",
+              "message": "An unexpected error occurred"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Agents",
+      "description": "Operations related to AI agents"
+    },
+    {
+      "name": "Calls",
+      "description": "Operations related to individual calls"
+    },
+    {
+      "name": "Batches",
+      "description": "Operations related to batch campaigns"
+    }
+  ]
+}
