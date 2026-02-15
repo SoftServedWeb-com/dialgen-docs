@@ -1,28 +1,4 @@
 ---
 title: "Get Live Call Status"
-description: "Retrieves the live status of an individual call from the memory cache."
+openapi: "get /api/v1/status/call"
 ---
-
-Retrieves the live status of an individual call from the memory cache (Redis). This is the primary endpoint for tracking a single call's progress from `SCHEDULED` to `COMPLETED` within **30 days** of its creation.
-
-*   **Endpoint:** `GET /api/v1/status/call`
-*   **Method:** `GET`
-*   **Query Parameters:**
-    *   `callId` (string, required): The ID returned from the `POST /api/v1/call/dial` endpoint.
-*   **Retention**: Data is available for **30 days**. After 30 days, please use the [Persistent Call Status](/api-reference/endpoint/check-persistent-call-status) endpoint.
-*   **Success Response (200 OK):**
-
-    ```json
-    {
-      "callId": "call_clxabc123...",
-      "status": "ONGOING",
-      "startTime": "2025-11-15T14:30:01.123Z",
-      "phoneNumber": "+15551234567",
-      "contactId": "contact_clx789ghi...",
-      "batchId": null,
-      "error": null,
-      "duration": null,
-      "recordingUrl": null
-    }
-    ```
-    *   **Status Enum:** `SCHEDULED`, `ONGOING`, `COMPLETED`, `MISSED`, `FAILED`

@@ -32,7 +32,6 @@
       },
       {
         "tab": "API Reference",
-        "openapi": "openapi.json",
         "groups": [
           {
             "group": "Introduction",
@@ -43,27 +42,27 @@
           {
             "group": "Agents",
             "pages": [
-              "GET /api/v1/agent"
+              "api-reference/endpoint/get-agent"
             ]
           },
           {
             "group": "Calls",
             "pages": [
-              "POST /api/v1/call/dial",
-              "GET /api/v1/status/call",
-              "GET /api/v1/call/check-status",
-              "GET /api/v1/call/get-metric",
-              "POST /api/v1/call/create-summary"
+              "api-reference/endpoint/dial-single",
+              "api-reference/endpoint/get-call-status",
+              "api-reference/endpoint/check-persistent-call-status",
+              "api-reference/endpoint/get-call-metrics",
+              "api-reference/endpoint/create-summary"
             ]
           },
           {
             "group": "Batches",
             "pages": [
-              "POST /api/v1/batch",
-              "GET /api/v1/status/batch",
-              "GET /api/v1/batch/check-status",
-              "GET /api/v1/batch/list",
-              "POST /api/v1/batch/cancel"
+              "api-reference/endpoint/create-batch",
+              "api-reference/endpoint/get-batch-status",
+              "api-reference/endpoint/get-batch-stats",
+              "api-reference/endpoint/batch-list",
+              "api-reference/endpoint/cancel-batch"
             ]
           }
         ]

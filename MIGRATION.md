@@ -70,10 +70,12 @@ Authorization: Bearer <YOUR_API_KEY>
 
 ## Mintlify Features
 
-### HTTP Method Badges
-Mintlify automatically displays HTTP method badges for each endpoint:
-- <Badge icon="circle" color="green">GET</Badge> for GET requests
-- <Badge icon="circle" color="blue">POST</Badge> for POST requests
+### HTTP Method Display
+Mintlify automatically displays HTTP methods for OpenAPI-generated endpoints:
+- GET requests show with green indicators
+- POST requests show with blue indicators
+
+The HTTP method appears in the page title and navigation automatically - no manual configuration needed!
 
 ### API Playground
 Each endpoint now has an interactive API playground where users can:

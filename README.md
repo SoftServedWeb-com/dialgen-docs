@@ -58,30 +58,32 @@ The API documentation is now powered by OpenAPI 3.0 specification. All endpoints
 
 ### Endpoints Overview
 
-#### <Badge icon="circle" color="green">GET</Badge> Agents
-- Get Agent details
+#### Agents
+- `GET /api/v1/agent` - Get Agent details
 
-#### <Badge icon="circle" color="blue">POST</Badge> / <Badge icon="circle" color="green">GET</Badge> Calls
-- Start a single call
-- Get live call status
-- Get persistent call status
-- Get call metrics
-- Create call summary
+#### Calls
+- `POST /api/v1/call/dial` - Start a single call
+- `GET /api/v1/status/call` - Get live call status
+- `GET /api/v1/call/check-status` - Get persistent call status
+- `GET /api/v1/call/get-metric` - Get call metrics
+- `POST /api/v1/call/create-summary` - Create call summary
 
-#### <Badge icon="circle" color="blue">POST</Badge> / <Badge icon="circle" color="green">GET</Badge> Batches
-- Create new batch campaign
-- Get live batch status
-- Get batch statistics
-- List all batches
-- Cancel batch
+#### Batches
+- `POST /api/v1/batch` - Create new batch campaign
+- `GET /api/v1/status/batch` - Get live batch status
+- `GET /api/v1/batch/check-status` - Get batch statistics
+- `GET /api/v1/batch/list` - List all batches
+- `POST /api/v1/batch/cancel` - Cancel batch
 
 ## 🎨 Mintlify Features
 
-### HTTP Method Badges
+### HTTP Method Display
 
-Mintlify automatically displays HTTP method badges for each endpoint. The badges are color-coded:
-- **GET** - Green (retrieval operations)
-- **POST** - Blue (creation/modification operations)
+Mintlify automatically displays HTTP methods for all OpenAPI-generated endpoints:
+- **GET** - Green indicator (retrieval operations)
+- **POST** - Blue indicator (creation/modification operations)
+
+The HTTP method is shown in the page title and highlighted in the navigation. No manual configuration needed!
 
 ### Interactive API Playground
 
