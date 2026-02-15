@@ -1,0 +1,365 @@
+---
+title: "Function Examples"
+description: "Ready-to-use function examples for common use cases."
+---
+
+## CRM Integration
+
+### Update Lead Status
+
+```json
+{
+  "name": "update_lead_status",
+  "description": "Updates the lead status in the CRM. Call this when the customer expresses their interest level. Use 'hot' for very interested, 'warm' for interested, 'cold' for not interested.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "lead_status": {
+        "type": "string",
+        "enum": ["hot", "warm", "cold"],
+        "description": "The lead's interest level"
+      },
+      "notes": {
+        "type": "string",
+        "description": "Notes about the conversation"
+      }
+    },
+    "required": ["lead_status"]
+  },
+  "api_endpoint": "https://crm.yourcompany.com/api/v1/leads/{{contact_id}}",
+  "http_method": "PUT",
+  "headers": {
+    "Authorization": "Bearer {{CRM_API_KEY}}"
+  },
+  "body_template": {
+    "status": "{{lead_status}}",
+    "notes": "{{notes}}",
+    "updated_by": "ai_agent",
+    "call_id": "{{call_sid}}"
+  }
+}
+```
+
+### Add CRM Note
+
+```json
+{
+  "name": "add_crm_note",
+  "description": "Adds a note to the customer's CRM record. Use this to log important information mentioned during the call.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "note_text": {
+        "type": "string",
+        "description": "The note content to add"
+      },
+      "note_type": {
+        "type": "string",
+        "enum": ["general", "follow_up", "complaint", "feedback"],
+        "description": "Type of note"
+      }
+    },
+    "required": ["note_text"]
+  },
+  "api_endpoint": "https://crm.yourcompany.com/api/v1/contacts/{{contact_id}}/notes",
+  "http_method": "POST",
+  "headers": {
+    "Authorization": "Bearer {{CRM_API_KEY}}"
+  },
+  "body_template": {
+    "content": "{{note_text}}",
+    "type": "{{note_type}}",
+    "created_by": "ai_agent"
+  }
+}
+```
+
+---
+
+## Order Management
+
+### Check Order Status
+
+```json
+{
+  "name": "check_order_status",
+  "description": "Retrieves the customer's order status and tracking information. Call this when the customer asks about their order, delivery, shipping, or tracking.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string",
+        "description": "The order number"
+      }
+    },
+    "required": ["order_id"]
+  },
+  "api_endpoint": "https://api.yourcompany.com/orders/{{order_id}}",
+  "http_method": "GET",
+  "headers": {
+    "Authorization": "Bearer {{API_KEY}}"
+  }
+}
+```
+
+### Process Return
+
+```json
+{
+  "name": "process_return",
+  "description": "Initiates a return request for an order. Call this when the customer wants to return a product.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string",
+        "description": "The order number to return"
+      },
+      "reason": {
+        "type": "string",
+        "enum": ["defective", "wrong_item", "not_needed", "other"],
+        "description": "Reason for return"
+      },
+      "items": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "List of item IDs to return"
+      }
+    },
+    "required": ["order_id", "reason"]
+  },
+  "api_endpoint": "https://api.yourcompany.com/returns",
+  "http_method": "POST",
+  "headers": {
+    "Authorization": "Bearer {{API_KEY}}"
+  },
+  "body_template": {
+    "order_id": "{{order_id}}",
+    "reason": "{{reason}}",
+    "items": "{{items}}",
+    "customer_id": "{{contact_id}}"
+  }
+}
+```
+
+---
+
+## Appointment Booking
+
+### Check Availability
+
+```json
+{
+  "name": "check_availability",
+  "description": "Checks available appointment slots for a specific date. Call this when the customer wants to schedule an appointment.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "date": {
+        "type": "string",
+        "description": "Date in YYYY-MM-DD format"
+      },
+      "service_type": {
+        "type": "string",
+        "enum": ["consultation", "follow-up", "procedure"],
+        "description": "Type of appointment"
+      }
+    },
+    "required": ["date"]
+  },
+  "api_endpoint": "https://api.yourcompany.com/appointments/availability",
+  "http_method": "GET",
+  "query_params": {
+    "date": "{{date}}",
+    "service": "{{service_type}}"
+  },
+  "headers": {
+    "Authorization": "Bearer {{API_KEY}}"
+  }
+}
+```
+
+### Book Appointment
+
+```json
+{
+  "name": "book_appointment",
+  "description": "Books an appointment for the customer. Call this after confirming the date, time, and service type with the customer.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "date": {
+        "type": "string",
+        "description": "Date in YYYY-MM-DD format"
+      },
+      "time": {
+        "type": "string",
+        "description": "Time in HH:MM format (24-hour)"
+      },
+      "service_type": {
+        "type": "string",
+        "description": "Type of appointment"
+      }
+    },
+    "required": ["date", "time", "service_type"]
+  },
+  "api_endpoint": "https://api.yourcompany.com/appointments",
+  "http_method": "POST",
+  "headers": {
+    "Authorization": "Bearer {{API_KEY}}"
+  },
+  "body_template": {
+    "customer_name": "{{contact_name}}",
+    "phone": "{{from_number}}",
+    "date": "{{date}}",
+    "time": "{{time}}",
+    "service": "{{service_type}}"
+  }
+}
+```
+
+---
+
+## Communication
+
+### Send SMS
+
+```json
+{
+  "name": "send_sms",
+  "description": "Sends an SMS message to the customer. Use this to send confirmation codes, appointment reminders, or important information.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "description": "The message to send"
+      }
+    },
+    "required": ["message"]
+  },
+  "api_endpoint": "https://api.twilio.com/2010-04-01/Accounts/{{TWILIO_ACCOUNT_SID}}/Messages.json",
+  "http_method": "POST",
+  "headers": {
+    "Authorization": "Basic {{TWILIO_AUTH_TOKEN}}"
+  },
+  "body_template": {
+    "To": "{{from_number}}",
+    "From": "{{to_number}}",
+    "Body": "{{message}}"
+  }
+}
+```
+
+### Send Email
+
+```json
+{
+  "name": "send_email",
+  "description": "Sends an email to the customer. Use this to send detailed information, documents, or follow-up materials.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "subject": {
+        "type": "string",
+        "description": "Email subject line"
+      },
+      "body": {
+        "type": "string",
+        "description": "Email body content"
+      }
+    },
+    "required": ["subject", "body"]
+  },
+  "api_endpoint": "https://api.yourcompany.com/emails/send",
+  "http_method": "POST",
+  "headers": {
+    "Authorization": "Bearer {{API_KEY}}"
+  },
+  "body_template": {
+    "to": "{{contact_email}}",
+    "subject": "{{subject}}",
+    "body": "{{body}}",
+    "from": "noreply@yourcompany.com"
+  }
+}
+```
+
+---
+
+## Data Retrieval
+
+### Get Customer Profile
+
+```json
+{
+  "name": "get_customer_profile",
+  "description": "Retrieves the customer's profile information including account details and preferences. Call this when you need customer information.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "customer_id": {
+        "type": "string",
+        "description": "The customer ID"
+      }
+    },
+    "required": ["customer_id"]
+  },
+  "api_endpoint": "https://api.yourcompany.com/customers/{{customer_id}}",
+  "http_method": "GET",
+  "headers": {
+    "Authorization": "Bearer {{API_KEY}}"
+  }
+}
+```
+
+### Search Products
+
+```json
+{
+  "name": "search_products",
+  "description": "Searches for products in the catalog. Call this when the customer asks about products, pricing, or availability.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Search query"
+      },
+      "category": {
+        "type": "string",
+        "description": "Product category to filter by"
+      },
+      "max_price": {
+        "type": "number",
+        "description": "Maximum price filter"
+      }
+    },
+    "required": ["query"]
+  },
+  "api_endpoint": "https://api.yourcompany.com/products/search",
+  "http_method": "GET",
+  "query_params": {
+    "q": "{{query}}",
+    "category": "{{category}}",
+    "max_price": "{{max_price}}"
+  },
+  "headers": {
+    "Authorization": "Bearer {{API_KEY}}"
+  }
+}
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Best Practices" icon="star" href="/guides/custom-functions/best-practices">
+    Learn function calling best practices
+  </Card>
+  
+  <Card title="Testing" icon="vial" href="/guides/custom-functions/testing">
+    How to test and debug functions
+  </Card>
+</CardGroup>

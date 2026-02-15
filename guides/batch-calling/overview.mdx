@@ -1,0 +1,125 @@
+---
+title: "Batch Calling Overview"
+description: "Automate outbound calls to hundreds or thousands of contacts with batch campaigns."
+---
+
+## What is Batch Calling?
+
+Batch calling lets you automate outbound calls to hundreds or thousands of contacts by uploading a list of contacts. Ideal for lead qualification, customer outreach, appointment reminders, and other high-volume calling campaigns.
+
+---
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Contact Management" icon="users" href="/guides/batch-calling/contact-format">
+    Upload and manage contact lists with custom metadata
+  </Card>
+  
+  <Card title="Batch Configuration" icon="sliders" href="/guides/batch-calling/configuration">
+    Configure priority, rate limiting, scheduling, and retry strategies
+  </Card>
+  
+  <Card title="Monitoring & Status" icon="chart-line" href="/guides/batch-calling/monitoring">
+    Track batch progress and individual call statuses in real-time
+  </Card>
+  
+  <Card title="Webhooks" icon="webhook" href="/guides/batch-calling/webhooks">
+    Receive notifications for batch and call completion events
+  </Card>
+</CardGroup>
+
+---
+
+## How It Works
+
+<Steps>
+  <Step title="Prepare Your Agent">
+    Configure your AI agent with voice settings, prompt, and metrics
+  </Step>
+  
+  <Step title="Upload Contacts">
+    Submit your contact list via API with phone numbers and metadata
+  </Step>
+  
+  <Step title="Configure Options">
+    Set priority, rate limits, scheduling, and retry strategies
+  </Step>
+  
+  <Step title="Monitor Progress">
+    Track batch status and individual call progress in real-time
+  </Step>
+  
+  <Step title="Retrieve Results">
+    Get detailed metrics, transcripts, and summaries for each call
+  </Step>
+</Steps>
+
+---
+
+## Quick Start
+
+Create a batch campaign with a simple API call:
+
+```bash
+curl --location 'https://sa.dialgen.ai/api/v1/batch' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+--data '{
+  "agentId": "agent_123",
+  "userId": "user_456",
+  "contacts": [
+    {
+      "phoneNumber": "+15551234567",
+      "name": "Jane Doe",
+      "email": "jane@example.com"
+    }
+  ]
+}'
+```
+
+<Info>
+  See the [Create Batch API](/api-reference/endpoint/create-batch) for complete documentation.
+</Info>
+
+---
+
+## Use Cases
+
+### Lead Qualification
+
+Automatically call leads to qualify interest and gather information.
+
+### Customer Outreach
+
+Reach out to customers for feedback, surveys, or announcements.
+
+### Appointment Reminders
+
+Send automated appointment reminders to reduce no-shows.
+
+### Follow-ups
+
+Follow up with customers after purchases or support interactions.
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Contact Format" icon="file-lines" href="/guides/batch-calling/contact-format">
+    Learn about contact list structure and metadata
+  </Card>
+  
+  <Card title="Configuration Options" icon="gear" href="/guides/batch-calling/configuration">
+    Explore all batch configuration settings
+  </Card>
+  
+  <Card title="Monitoring Guide" icon="monitor" href="/guides/batch-calling/monitoring">
+    Track and analyze batch campaign performance
+  </Card>
+  
+  <Card title="API Reference" icon="code" href="/api-reference/endpoint/create-batch">
+    Complete API documentation for batch calling
+  </Card>
+</CardGroup>

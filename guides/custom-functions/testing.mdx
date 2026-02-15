@@ -1,0 +1,295 @@
+---
+title: "Testing Functions"
+description: "Test and debug custom functions before deploying to production."
+---
+
+## Testing Strategy
+
+Follow this approach to ensure your functions work reliably:
+
+<Steps>
+  <Step title="Unit Test">
+    Test your API endpoint independently
+  </Step>
+  
+  <Step title="Integration Test">
+    Test function definition with sample parameters
+  </Step>
+  
+  <Step title="Conversation Test">
+    Test with live agent conversations
+  </Step>
+  
+  <Step title="Production Monitor">
+    Monitor function calls in production
+  </Step>
+</Steps>
+
+---
+
+## Unit Testing Your API
+
+Test your API endpoint before integrating:
+
+### Using curl
+
+```bash
+curl -X POST https://api.yourcompany.com/orders/status \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "order_id": "TEST_123"
+  }'
+```
+
+### Using Postman
+
+1. Create a new request
+2. Set method and URL
+3. Add headers
+4. Add request body
+5. Send and verify response
+
+### Expected Response
+
+Ensure your API returns:
+- Consistent JSON structure
+- Appropriate status codes
+- Clear error messages
+- Fast response time (< 2s)
+
+---
+
+## Testing Function Definitions
+
+### Validate JSON Schema
+
+Use online validators:
+- [JSON Schema Validator](https://www.jsonschemavalidator.net/)
+- [Swagger Editor](https://editor.swagger.io/)
+
+### Test with Sample Parameters
+
+```json
+{
+  "function": "check_order_status",
+  "test_parameters": {
+    "order_id": "TEST_ORDER_123"
+  },
+  "expected_response": {
+    "status": "shipped",
+    "tracking_number": "1Z999AA10123456784"
+  }
+}
+```
+
+---
+
+## Conversation Testing
+
+### Create Test Scenarios
+
+**Scenario 1: Happy Path**
+```text
+User: "I want to check my order status"
+Agent: "I'd be happy to help. What's your order number?"
+User: "It's ORDER-123"
+Agent: [Calls check_order_status function]
+Agent: "Your order is currently in transit and will arrive on Friday"
+```
+
+**Scenario 2: Missing Information**
+```text
+User: "Check my order"
+Agent: "I'll check that for you. What's your order number?"
+User: "I don't have it"
+Agent: "No problem. Can you provide your email address?"
+```
+
+**Scenario 3: Error Handling**
+```text
+User: "Order number ABC-999"
+Agent: [Calls function, receives 404 error]
+Agent: "I couldn't find that order number. Could you verify it's correct?"
+```
+
+### Test Checklist
+
+- ✓ Function triggers at the right time
+- ✓ Parameters are extracted correctly
+- ✓ API call succeeds
+- ✓ Response is interpreted correctly
+- ✓ Agent continues conversation naturally
+- ✓ Errors are handled gracefully
+
+---
+
+## Debugging
+
+### Enable Logging
+
+Log all function calls:
+
+```javascript
+app.post('/api/orders/status', (req, res) => {
+  console.log('Function call received:', {
+    timestamp: new Date().toISOString(),
+    callId: req.headers['x-call-id'],
+    body: req.body,
+    source: req.headers['user-agent']
+  });
+  
+  // Process request
+  
+  console.log('Function response:', {
+    status: 200,
+    data: responseData
+  });
+  
+  res.json(responseData);
+});
+```
+
+### Common Issues
+
+#### Function Not Triggering
+
+**Symptoms:**
+- Agent doesn't call the function when expected
+
+**Debug Steps:**
+1. Check function description is clear
+2. Add more trigger examples
+3. Make conditions more explicit
+4. Test with direct requests
+
+#### Wrong Parameters Extracted
+
+**Symptoms:**
+- Function called with incorrect parameter values
+
+**Debug Steps:**
+1. Improve parameter descriptions
+2. Add format examples
+3. Use enums to constrain values
+4. Add validation in prompt
+
+#### API Call Fails
+
+**Symptoms:**
+- Function triggers but API returns error
+
+**Debug Steps:**
+1. Test API endpoint with curl
+2. Check authentication headers
+3. Verify parameter format
+4. Review API logs
+
+---
+
+## Monitoring Production
+
+### Track Function Calls
+
+Monitor these metrics:
+- Function call frequency
+- Success rate
+- Average response time
+- Error rate by type
+
+### Set Up Alerts
+
+Alert on:
+- High error rate (> 5%)
+- Slow response time (> 5s)
+- Authentication failures
+- Unexpected errors
+
+### Review Logs
+
+Regularly review:
+- Function call logs
+- API error logs
+- Agent conversation logs
+- User feedback
+
+---
+
+## Testing Tools
+
+### ngrok for Local Testing
+
+```bash
+# Start your local API
+node server.js
+
+# In another terminal, start ngrok
+ngrok http 3000
+
+# Use ngrok URL in function definition
+https://abc123.ngrok.io/api/orders/status
+```
+
+### Mock APIs
+
+Use mock APIs for testing:
+
+```javascript
+// mock-api.js
+const express = require('express');
+const app = express();
+
+app.post('/api/orders/status', (req, res) => {
+  const { order_id } = req.body;
+  
+  // Return mock data
+  res.json({
+    order_id: order_id,
+    status: 'shipped',
+    tracking_number: 'MOCK123',
+    estimated_delivery: '2025-11-20'
+  });
+});
+
+app.listen(3000);
+```
+
+---
+
+## Best Practices
+
+### Start Simple
+
+Begin with simple functions:
+1. Single parameter
+2. Simple GET request
+3. Clear success/failure states
+
+### Iterate Based on Data
+
+1. Deploy with logging
+2. Monitor for issues
+3. Adjust based on patterns
+4. Refine descriptions and parameters
+
+### Document Everything
+
+- Function purpose and triggers
+- Parameter formats and examples
+- Expected responses
+- Error scenarios
+- Testing procedures
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Examples" icon="code" href="/guides/custom-functions/examples">
+    View more function examples
+  </Card>
+  
+  <Card title="API Integration" icon="plug" href="/guides/custom-functions/api-integration">
+    Complete API integration guide
+  </Card>
+</CardGroup>

@@ -1,0 +1,221 @@
+---
+title: "Contact List Format"
+description: "Structure your contact lists with phone numbers, names, and custom metadata."
+---
+
+## Contact Structure
+
+Each contact in your batch must include a phone number and can optionally include additional information:
+
+```json
+{
+  "phoneNumber": "+15551234567",
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "company": "Acme Corp",
+  "metadata": {
+    "lead_score": 80,
+    "account_id": "A123",
+    "last_contact": "2025-01-15"
+  }
+}
+```
+
+---
+
+## Required Fields
+
+### Phone Number
+
+- **Field**: `phoneNumber`
+- **Format**: E.164 (e.g., `+15551234567`)
+- **Required**: Yes
+
+<Warning>
+  Phone numbers must include the country code and be in E.164 format. Invalid formats will be rejected.
+</Warning>
+
+---
+
+## Optional Fields
+
+### Name
+
+- **Field**: `name`
+- **Type**: String
+- **Default**: "Unknown"
+
+```json
+{
+  "name": "Jane Doe"
+}
+```
+
+### Email
+
+- **Field**: `email`
+- **Type**: String (valid email format)
+- **Default**: null
+
+```json
+{
+  "email": "jane@example.com"
+}
+```
+
+### Company
+
+- **Field**: `company`
+- **Type**: String
+- **Default**: null
+
+```json
+{
+  "company": "Acme Corp"
+}
+```
+
+---
+
+## Custom Metadata
+
+Use the `metadata` field to pass custom variables to your agent:
+
+```json
+{
+  "metadata": {
+    "lead_score": 80,
+    "account_id": "A123",
+    "product_interest": "Enterprise Plan",
+    "last_contact_date": "2025-01-15",
+    "timezone": "America/New_York"
+  }
+}
+```
+
+### Using Metadata in Agent Prompts
+
+Reference metadata variables using curly braces:
+
+```text
+Hello {name}! I'm calling from Acme Corp regarding your interest in our {product_interest}.
+
+I see you're in the {timezone} timezone, so I wanted to reach out at a convenient time.
+
+Your account ID is {account_id} for reference.
+```
+
+<Tip>
+  Metadata is perfect for personalizing conversations and passing context-specific information to your agent.
+</Tip>
+
+---
+
+## Contact Deduplication
+
+Dialgen automatically handles duplicate contacts:
+
+### By Contact ID
+
+If you provide an existing `id`, the contact is reused:
+
+```json
+{
+  "id": "contact_existing_123",
+  "phoneNumber": "+15551234567",
+  "name": "Jane Doe"
+}
+```
+
+### By Phone Number
+
+Contacts with matching phone numbers are identified and reused:
+
+```json
+{
+  "phoneNumber": "+15551234567"
+}
+```
+
+### Benefits
+
+- **Preserves call history** across campaigns
+- **Prevents duplicates** in your database
+- **Resets attempt counts** for new campaigns
+- **Maintains contact data** integrity
+
+---
+
+## Example: Complete Contact List
+
+```json
+{
+  "contacts": [
+    {
+      "phoneNumber": "+15551234567",
+      "name": "Jane Doe",
+      "email": "jane@example.com",
+      "company": "Acme Corp",
+      "metadata": {
+        "lead_score": 80,
+        "account_id": "A123"
+      }
+    },
+    {
+      "id": "contact_existing_456",
+      "phoneNumber": "+15557654321",
+      "name": "John Smith",
+      "metadata": {
+        "lead_score": 90,
+        "follow_up": true
+      }
+    },
+    {
+      "phoneNumber": "+15559876543",
+      "name": "Alice Johnson"
+    }
+  ]
+}
+```
+
+---
+
+## Best Practices
+
+### Validate Phone Numbers
+
+- Ensure all numbers are in E.164 format
+- Verify country codes are correct
+- Remove invalid or disconnected numbers
+
+### Enrich Contact Data
+
+- Include names for personalization
+- Add email for follow-up communications
+- Use metadata for context-specific information
+
+### Organize Metadata
+
+- Use consistent key names across contacts
+- Keep metadata relevant to the conversation
+- Avoid sensitive information in metadata
+
+### Reuse Contact IDs
+
+- Provide existing contact IDs when available
+- Preserve call history across campaigns
+- Track contact interactions over time
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration Options" icon="gear" href="/guides/batch-calling/configuration">
+    Configure batch settings and options
+  </Card>
+  
+  <Card title="Create Batch API" icon="code" href="/api-reference/endpoint/create-batch">
+    Complete API reference
+  </Card>
+</CardGroup>

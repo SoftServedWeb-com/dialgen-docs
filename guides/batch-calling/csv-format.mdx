@@ -1,0 +1,196 @@
+---
+title: "CSV Upload Format"
+description: "Learn how to format your CSV file for batch calling uploads."
+---
+
+## CSV File Format
+
+Your CSV file must follow these rules for successful batch calling:
+
+---
+
+## Rule 1: Use E.164 Phone Format
+
+All phone numbers must include the country prefix in E.164 format (e.g., `+11231237890`).
+
+**❌ Wrong:**
+```
+1231237890
+0091234567890
+(123) 123-7890
+```
+
+**✅ Correct:**
+```
++11231237890
++919123456789
++44 2100000000
+```
+
+<Tip>
+  E.164 is the international standard for phone numbers. It includes:
+  - Plus sign (+)
+  - Country code (1-3 digits)
+  - Area code and number (up to 14 digits total)
+</Tip>
+
+---
+
+## Rule 2: Use contact_number Header
+
+The phone number column header must be exactly `contact_number`.
+
+**❌ Wrong:**
+```
+phone,name,email
++11231237890,John,john@example.com
+```
+
+**✅ Correct:**
+```
+contact_number,name,email
++11231237890,John,john@example.com
+```
+
+---
+
+## Rule 3: Add Custom Variables
+
+Include any additional variables (name, email, company, etc.) as separate columns. These are passed to your agent as context.
+
+**Example with custom variables:**
+```
+contact_number,first_name,last_name,company,email
++11231237890,Bruce,Wayne,Wayne Enterprises,bruce@wayne.com
++919123456789,Bruce,Lee,Martial Arts Inc,bruce@lee.com
++00021000000,Satoshi,Nakamoto,Bitcoin,satoshi@nakamoto.com
++44999999987,James,Bond,MI6,james@bond.com
+```
+
+---
+
+## Complete Example
+
+```csv
+contact_number,first_name,last_name,company,email
++11231237890,John,Doe,Acme Corp,john@acme.com
++12025550123,Jane,Smith,Tech Solutions,jane@tech.com
++919876543210,Raj,Kumar,India Services,raj@india.com
++441632960123,Alice,Johnson,UK Ventures,alice@uk.com
++33123456789,Pierre,Dupont,France Consulting,pierre@france.com
+```
+
+---
+
+## Important Notes
+
+### Excel Formula Warning
+
+<Warning>
+  In Excel, if you type a cell starting with `+`, it may be interpreted as a formula. To prevent this:
+  
+  1. Right-click the column
+  2. Select **Format Cells**
+  3. Choose **Text** format
+  4. Add an apostrophe before the plus: `'+11231237890`
+
+  The apostrophe won't appear in the final file, but it prevents Excel from treating it as a formula.
+</Warning>
+
+### Column Order
+
+- Column order doesn't matter
+- `contact_number` is the only required column
+- All other columns are optional and become variables
+
+### Variable Naming
+
+- Use lowercase with underscores: `first_name`, `last_name`, `phone_ext`
+- Avoid spaces and special characters
+- Use clear, descriptive names
+
+---
+
+## Using Variables in Agent Prompts
+
+Reference variables in your agent prompt using curly braces:
+
+```text
+Hello {first_name}! I'm calling from {company} regarding your recent inquiry.
+
+I have your email on file as {email}. Is that still the best way to reach you?
+```
+
+---
+
+## Validation Checklist
+
+Before uploading, verify:
+
+- ✓ All phone numbers start with `+`
+- ✓ All phone numbers are in E.164 format
+- ✓ Header column is exactly `contact_number`
+- ✓ No duplicate phone numbers
+- ✓ No empty rows or columns
+- ✓ CSV is UTF-8 encoded
+- ✓ File size is under 50MB
+
+---
+
+## Common Issues
+
+### "Invalid phone number format"
+
+**Problem:** Phone numbers not in E.164 format
+
+**Solution:** Add country code with `+` prefix
+
+```
+Before: 1234567890
+After:  +11234567890
+```
+
+### "contact_number header not found"
+
+**Problem:** Column header is misspelled
+
+**Solution:** Make sure the header is exactly `contact_number` (lowercase, underscore)
+
+```
+Wrong: Contact Number, phone_number, Phone
+Right: contact_number
+```
+
+### "Duplicate contact"
+
+**Problem:** Same phone number appears multiple times
+
+**Solution:** Remove duplicate rows or use different contact identifiers if needed
+
+---
+
+## Download Example
+
+Download our example CSV file to use as a template:
+
+```csv
+contact_number,first_name,last_name,company,email,lead_score
++11231237890,Bruce,Wayne,Wayne Enterprises,bruce@wayne.com,95
++919123456789,Bruce,Lee,Martial Arts Inc,bruce@lee.com,85
++00021000000,Satoshi,Nakamoto,Bitcoin,satoshi@nakamoto.com,90
++44999999987,James,Bond,MI6,james@bond.com,80
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Contact Format" icon="file-lines" href="/guides/batch-calling/contact-format">
+    JSON contact format for API calls
+  </Card>
+  
+  <Card title="Create Batch" icon="code" href="/api-reference/endpoint/create-batch">
+    API reference for batch creation
+  </Card>
+</CardGroup>

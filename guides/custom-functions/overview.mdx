@@ -1,0 +1,121 @@
+---
+title: "Custom Function Calling"
+description: "Integrate external APIs and workflows into your AI agents with function calling."
+---
+
+## What is Function Calling?
+
+Function calling enables your AI agents to execute real-time actions during conversations by calling external APIs and triggering workflows.
+
+---
+
+## Capabilities
+
+<CardGroup cols={2}>
+  <Card title="API Integration" icon="plug" href="/guides/custom-functions/api-integration">
+    Connect to external APIs and services
+  </Card>
+  
+  <Card title="Function Examples" icon="code" href="/guides/custom-functions/examples">
+    Ready-to-use function examples for common use cases
+  </Card>
+  
+  <Card title="Best Practices" icon="star" href="/guides/custom-functions/best-practices">
+    Tips for reliable and secure function calling
+  </Card>
+  
+  <Card title="Testing Functions" icon="vial" href="/guides/custom-functions/testing">
+    How to test and debug custom functions
+  </Card>
+</CardGroup>
+
+---
+
+## How It Works
+
+<Steps>
+  <Step title="AI Reads Function">
+    The AI understands what the function does from its description
+  </Step>
+  
+  <Step title="Detects Trigger">
+    Based on conversation, AI decides when to call the function
+  </Step>
+  
+  <Step title="Extracts Parameters">
+    AI collects required parameters from the conversation
+  </Step>
+  
+  <Step title="Executes API Call">
+    Dialgen makes the HTTP request to your endpoint
+  </Step>
+  
+  <Step title="Returns Response">
+    API response feeds back to AI for natural continuation
+  </Step>
+</Steps>
+
+---
+
+## Quick Example
+
+```json
+{
+  "name": "check_order_status",
+  "description": "Checks the customer's order status. Call this when the customer asks about their order, delivery, or tracking.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "order_id": {
+        "type": "string",
+        "description": "The order number"
+      }
+    },
+    "required": ["order_id"]
+  },
+  "api_endpoint": "https://api.yourcompany.com/orders/status",
+  "http_method": "POST"
+}
+```
+
+<Tip>
+  The description is critical. The AI relies on it to know when to trigger the function.
+</Tip>
+
+---
+
+## Use Cases
+
+### CRM Integration
+
+Update customer records, add notes, change lead status.
+
+### Appointment Booking
+
+Check availability and book appointments in real-time.
+
+### Order Management
+
+Check order status, process returns, track shipments.
+
+### Payment Processing
+
+Process payments, check balances, send invoices.
+
+### Data Retrieval
+
+Fetch customer data, account information, product details.
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Integration" icon="plug" href="/guides/custom-functions/api-integration">
+    Learn how to integrate external APIs
+  </Card>
+  
+  <Card title="Examples" icon="code" href="/guides/custom-functions/examples">
+    View ready-to-use function examples
+  </Card>
+</CardGroup>

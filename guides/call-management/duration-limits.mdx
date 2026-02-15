@@ -1,0 +1,116 @@
+---
+title: "Call Duration Limits"
+description: "Set maximum call duration to automatically terminate calls and manage resources."
+---
+
+## What are Duration Limits?
+
+Duration limits set a maximum length (in seconds) for calls. Once reached, the call automatically terminates.
+
+---
+
+## Why Use Duration Limits?
+
+<CardGroup cols={2}>
+  <Card title="Control Costs" icon="dollar-sign">
+    Prevent unexpectedly long calls from consuming excessive credits
+  </Card>
+  
+  <Card title="Manage Resources" icon="server">
+    Ensure fair allocation of concurrent call capacity
+  </Card>
+  
+  <Card title="Safety Net" icon="shield-check">
+    Protect against technical issues that prevent natural endings
+  </Card>
+  
+  <Card title="Predictable Billing" icon="receipt">
+    Better forecast and manage calling expenses
+  </Card>
+</CardGroup>
+
+---
+
+## Configuration
+
+Set the maximum duration in your agent settings:
+
+```json
+{
+  "maxCallDuration": 900
+}
+```
+
+- **Unit**: Seconds
+- **Default**: 1800 (30 minutes)
+- **Recommended**: 300-1800 based on use case
+
+---
+
+## Recommended Durations
+
+| Use Case              | Duration | Seconds |
+| --------------------- | -------- | ------- |
+| Quick inquiries       | 5 min    | 300     |
+| Lead qualification    | 10 min   | 600     |
+| Customer support      | 15 min   | 900     |
+| Sales calls           | 20 min   | 1200    |
+| Consultations         | 30 min   | 1800    |
+
+---
+
+## What Happens at Limit?
+
+When the duration limit is reached:
+
+1. Call terminates immediately
+2. Hangup message is played (if configured)
+3. Status updates to `COMPLETED`
+4. Recording and transcript are saved
+5. Metrics are generated
+6. Webhooks are triggered
+
+<Warning>
+  The call ends immediately when the limit is reached, even mid-sentence. Consider adding a warning before the limit.
+</Warning>
+
+---
+
+## Best Practices
+
+### Set Realistic Limits
+
+- Analyze average call durations
+- Set limits 20-30% above average
+- Account for edge cases
+
+### Add Warning Messages
+
+Include a prompt to warn users:
+
+```text
+DURATION WARNING:
+- When 80% of max duration is reached, say: "We have about 2 minutes left. Is there anything else I can help you with?"
+- When 95% is reached, say: "We're almost out of time. Let me quickly address your main concern."
+```
+
+### Monitor Metrics
+
+Track:
+- Calls hitting duration limit
+- Average duration by use case
+- Correlation with satisfaction scores
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Hangup Detection" icon="phone-hangup" href="/guides/call-management/hangup-detection">
+    Configure natural call endings
+  </Card>
+  
+  <Card title="Call Status" icon="signal" href="/guides/call-management/call-status">
+    Monitor call status and metrics
+  </Card>
+</CardGroup>

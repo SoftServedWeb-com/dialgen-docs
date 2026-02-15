@@ -1,0 +1,133 @@
+---
+title: "Call Management"
+description: "Configure call duration limits, hangup detection, and call termination settings."
+---
+
+## Managing Call Lifecycle
+
+Control how calls start, progress, and end with Dialgen's call management features.
+
+---
+
+## Features
+
+<CardGroup cols={2}>
+  <Card title="Duration Limits" icon="timer" href="/guides/call-management/duration-limits">
+    Set maximum call duration as a safety net
+  </Card>
+  
+  <Card title="Hangup Detection" icon="phone-hangup" href="/guides/call-management/hangup-detection">
+    Configure silence detection and natural call endings
+  </Card>
+  
+  <Card title="Call Status" icon="signal" href="/guides/call-management/call-status">
+    Monitor call status and lifecycle
+  </Card>
+  
+  <Card title="Recording & Transcripts" icon="file-audio" href="/guides/call-management/recordings">
+    Access call recordings and transcripts
+  </Card>
+</CardGroup>
+
+---
+
+## Call Lifecycle
+
+<Steps>
+  <Step title="Initiated">
+    Call is queued and waiting to be placed
+  </Step>
+  
+  <Step title="Ringing">
+    Phone is ringing, waiting for answer
+  </Step>
+  
+  <Step title="Connected">
+    Call is answered and conversation begins
+  </Step>
+  
+  <Step title="Active">
+    Conversation in progress
+  </Step>
+  
+  <Step title="Ending">
+    Hangup detected or duration limit reached
+  </Step>
+  
+  <Step title="Completed">
+    Call ended, recording and metrics saved
+  </Step>
+</Steps>
+
+---
+
+## Key Settings
+
+### Duration Limits
+
+Set maximum call length to prevent runaway calls:
+
+```json
+{
+  "maxCallDuration": 900
+}
+```
+
+### Silence Detection
+
+Configure silence timeout for automatic hangup:
+
+```json
+{
+  "silenceTimeout": 12
+}
+```
+
+### Hangup Message
+
+Customize the closing message:
+
+```json
+{
+  "hangupMessage": "Thank you for calling, {name}. Have a great day!"
+}
+```
+
+---
+
+## Best Practices
+
+### Combine Multiple Methods
+
+Use both duration limits and hangup detection:
+
+- **Duration limits**: Safety net (hard cutoff)
+- **Hangup detection**: Natural endings (intelligent)
+
+### Monitor Call Metrics
+
+Track these metrics:
+- Average call duration
+- Hangup reasons
+- Success rate
+- User satisfaction
+
+### Test Thoroughly
+
+- Test various conversation flows
+- Monitor premature hangups
+- Adjust settings based on data
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Duration Limits" icon="clock" href="/guides/call-management/duration-limits">
+    Configure maximum call duration
+  </Card>
+  
+  <Card title="Hangup Detection" icon="phone-slash" href="/guides/call-management/hangup-detection">
+    Set up intelligent call termination
+  </Card>
+</CardGroup>

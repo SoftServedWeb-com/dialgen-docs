@@ -1,0 +1,307 @@
+---
+title: "Best Practices"
+description: "Tips for reliable, secure, and effective custom function calling."
+---
+
+## Writing Effective Descriptions
+
+The description is the most critical part of your function definition.
+
+### Be Specific
+
+**❌ Bad:**
+```json
+{
+  "description": "Gets data"
+}
+```
+
+**✅ Good:**
+```json
+{
+  "description": "Retrieves the customer's order status including tracking number, current location, and estimated delivery date. Call this when the customer asks about their order, delivery, shipping, or tracking."
+}
+```
+
+### Include Trigger Examples
+
+```json
+{
+  "description": "Books a hotel room. Call this when the customer wants to make a reservation. Example triggers: 'I'd like to book a room', 'Can you reserve a hotel for me', 'I need accommodation for next week'"
+}
+```
+
+### Specify When NOT to Call
+
+```json
+{
+  "description": "Cancels an order. Call this ONLY when the customer explicitly requests to cancel their order. Do NOT call this for returns, modifications, or general inquiries."
+}
+```
+
+---
+
+## Parameter Design
+
+### Use Enums for Constrained Values
+
+**❌ Bad:**
+```json
+{
+  "priority": {
+    "type": "string",
+    "description": "Priority level"
+  }
+}
+```
+
+**✅ Good:**
+```json
+{
+  "priority": {
+    "type": "string",
+    "enum": ["low", "medium", "high", "urgent"],
+    "description": "Priority level for the request"
+  }
+}
+```
+
+### Provide Clear Descriptions
+
+```json
+{
+  "appointment_date": {
+    "type": "string",
+    "description": "Appointment date in YYYY-MM-DD format. Must be a future date. Example: 2025-12-25"
+  }
+}
+```
+
+### Set Validation Rules
+
+```json
+{
+  "quantity": {
+    "type": "number",
+    "minimum": 1,
+    "maximum": 100,
+    "description": "Quantity to order (between 1 and 100)"
+  }
+}
+```
+
+---
+
+## Security
+
+### Never Hardcode Secrets
+
+**❌ Bad:**
+```json
+{
+  "headers": {
+    "Authorization": "Bearer sk_live_abc123xyz789..."
+  }
+}
+```
+
+**✅ Good:**
+```json
+{
+  "headers": {
+    "Authorization": "Bearer {{API_KEY}}"
+  }
+}
+```
+
+### Use Environment Variables
+
+Store sensitive data in environment variables:
+- `{{API_KEY}}`
+- `{{DATABASE_URL}}`
+- `{{WEBHOOK_SECRET}}`
+
+### Validate Inputs
+
+Add validation in your API:
+
+```javascript
+app.post('/api/orders', (req, res) => {
+  const { order_id, quantity } = req.body;
+  
+  // Validate inputs
+  if (!order_id || typeof order_id !== 'string') {
+    return res.status(400).json({ error: 'Invalid order_id' });
+  }
+  
+  if (!quantity || quantity < 1 || quantity > 100) {
+    return res.status(400).json({ error: 'Invalid quantity' });
+  }
+  
+  // Process request
+});
+```
+
+### Implement Rate Limiting
+
+```javascript
+const rateLimit = require('express-rate-limit');
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100 // Max 100 requests per minute
+});
+
+app.use('/api/', limiter);
+```
+
+---
+
+## Error Handling
+
+### Return Clear Error Messages
+
+```json
+{
+  "error": "Order not found",
+  "code": "ORDER_NOT_FOUND",
+  "message": "The order ID provided does not exist or you don't have access to it"
+}
+```
+
+### Handle Timeouts
+
+Set reasonable timeouts:
+
+```json
+{
+  "timeout": 10000
+}
+```
+
+### Provide Fallbacks
+
+```text
+FUNCTION ERROR HANDLING:
+- If the API call fails, say: "I'm having trouble accessing that information right now. Let me transfer you to a team member who can help."
+- If the order is not found, say: "I couldn't find that order number. Can you please verify the order number?"
+```
+
+---
+
+## Performance
+
+### Keep Responses Fast
+
+- Optimize API response time (< 2 seconds)
+- Use caching where appropriate
+- Return only necessary data
+
+### Minimize Function Calls
+
+- Batch operations when possible
+- Cache frequently accessed data
+- Avoid redundant calls
+
+### Use Async Processing
+
+For long-running operations:
+
+```json
+{
+  "api_endpoint": "https://api.yourcompany.com/jobs",
+  "http_method": "POST",
+  "body_template": {
+    "operation": "generate_report",
+    "callback_url": "https://dialgen.ai/callbacks/{{call_sid}}"
+  }
+}
+```
+
+---
+
+## Testing
+
+### Test with Sample Data
+
+```json
+{
+  "test_parameters": {
+    "order_id": "TEST_ORDER_123",
+    "customer_id": "TEST_CUSTOMER_456"
+  }
+}
+```
+
+### Use Staging Endpoints
+
+```json
+{
+  "api_endpoint": "https://api-staging.yourcompany.com/orders"
+}
+```
+
+### Log Everything
+
+```javascript
+app.post('/api/orders', (req, res) => {
+  console.log('Function called:', {
+    timestamp: new Date().toISOString(),
+    body: req.body,
+    headers: req.headers
+  });
+  
+  // Process request
+});
+```
+
+---
+
+## Documentation
+
+### Document Your Functions
+
+Create internal documentation:
+
+```markdown
+## check_order_status
+
+**Purpose**: Retrieve order status and tracking
+
+**Triggers**:
+- "Where is my order?"
+- "What's the status of order #123?"
+- "Track my shipment"
+
+**Parameters**:
+- order_id (required): Order number
+
+**Returns**:
+- status: Order status
+- tracking_number: Tracking number
+- estimated_delivery: Delivery date
+```
+
+### Version Your APIs
+
+Use versioned endpoints:
+
+```json
+{
+  "api_endpoint": "https://api.yourcompany.com/v1/orders"
+}
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Testing Functions" icon="vial" href="/guides/custom-functions/testing">
+    Learn how to test and debug functions
+  </Card>
+  
+  <Card title="API Integration" icon="plug" href="/guides/custom-functions/api-integration">
+    Complete API integration guide
+  </Card>
+</CardGroup>

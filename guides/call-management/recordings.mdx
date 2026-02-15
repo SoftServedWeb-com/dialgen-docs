@@ -1,0 +1,236 @@
+---
+title: "Recordings & Transcripts"
+description: "Access call recordings, transcripts, and conversation data."
+---
+
+## Call Recordings
+
+Every call is automatically recorded and stored securely.
+
+---
+
+## Accessing Recordings
+
+### Via API
+
+Get the recording URL from call metrics:
+
+```bash
+curl --location 'https://sa.dialgen.ai/api/v1/call/get-metric?callId=call_123&userId=user_456&agentId=agent_789&contactId=contact_123' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "callData": {
+    "id": "call_123",
+    "recordingUrl": "https://recordings.dialgen.ai/call_123.mp3",
+    "duration": 180
+  }
+}
+```
+
+### Via Webhook
+
+Receive recording URL in the `onCallComplete` webhook:
+
+```json
+{
+  "callData": {
+    "recordingUrl": "https://recordings.dialgen.ai/call_123.mp3"
+  }
+}
+```
+
+---
+
+## Transcripts
+
+Full conversation transcripts are available for every call.
+
+### Transcript Format
+
+```json
+{
+  "transcription": [
+    {
+      "role": "assistant",
+      "content": "Hello! Thank you for calling Acme Corp. How can I help you today?",
+      "timestamp": "2025-11-15T14:30:02.000Z"
+    },
+    {
+      "role": "user",
+      "content": "Hi, I'm interested in your pricing plans.",
+      "timestamp": "2025-11-15T14:30:05.000Z"
+    },
+    {
+      "role": "assistant",
+      "content": "Great! We have three plans available...",
+      "timestamp": "2025-11-15T14:30:08.000Z"
+    }
+  ]
+}
+```
+
+### Transcript Fields
+
+- **`role`**: `assistant` (agent) or `user` (caller)
+- **`content`**: The spoken text
+- **`timestamp`**: When the message was spoken
+
+---
+
+## Storage & Retention
+
+### Recording Storage
+
+- **Format**: MP3
+- **Quality**: High-quality audio
+- **Retention**: 90 days
+- **Access**: Via secure HTTPS URLs
+
+### Transcript Storage
+
+- **Format**: JSON
+- **Retention**: Permanent
+- **Access**: Via API
+
+<Note>
+  Recordings are automatically deleted after 90 days. Download and store recordings externally if you need longer retention.
+</Note>
+
+---
+
+## Downloading Recordings
+
+### Single Recording
+
+```javascript
+async function downloadRecording(recordingUrl, callId) {
+  const response = await fetch(recordingUrl);
+  const buffer = await response.arrayBuffer();
+  
+  // Save to file
+  const fs = require('fs');
+  fs.writeFileSync(`recording_${callId}.mp3`, Buffer.from(buffer));
+}
+```
+
+### Batch Download
+
+```javascript
+async function downloadBatchRecordings(batchId) {
+  const calls = await getBatchCalls(batchId);
+  
+  for (const call of calls) {
+    if (call.recordingUrl) {
+      await downloadRecording(call.recordingUrl, call.id);
+    }
+  }
+}
+```
+
+---
+
+## Privacy & Compliance
+
+### Data Security
+
+- All recordings are encrypted at rest
+- Secure HTTPS URLs with expiration
+- Access controlled by API authentication
+
+### Compliance
+
+- **GDPR**: Right to deletion supported
+- **CCPA**: Data access and deletion available
+- **Recording Disclosure**: Ensure proper call recording disclosures
+
+<Warning>
+  Always inform callers that the call is being recorded, as required by law in many jurisdictions.
+</Warning>
+
+---
+
+## Using Transcripts
+
+### Search Transcripts
+
+```javascript
+function searchTranscript(transcript, keyword) {
+  return transcript.filter(message => 
+    message.content.toLowerCase().includes(keyword.toLowerCase())
+  );
+}
+
+// Find mentions of "pricing"
+const pricingMentions = searchTranscript(transcript, 'pricing');
+```
+
+### Analyze Sentiment
+
+```javascript
+function analyzeSentiment(transcript) {
+  const userMessages = transcript.filter(m => m.role === 'user');
+  
+  // Use sentiment analysis on user messages
+  const sentiments = userMessages.map(msg => 
+    analyzeSentiment(msg.content)
+  );
+  
+  return averageSentiment(sentiments);
+}
+```
+
+### Extract Key Information
+
+```javascript
+function extractPhoneNumbers(transcript) {
+  const phoneRegex = /\+?\d{10,}/g;
+  const allText = transcript.map(m => m.content).join(' ');
+  return allText.match(phoneRegex) || [];
+}
+```
+
+---
+
+## Best Practices
+
+### Inform Callers
+
+Add a disclosure to your agent prompt:
+
+```text
+OPENING MESSAGE:
+"Hello! This call may be recorded for quality and training purposes. How can I help you today?"
+```
+
+### Store Securely
+
+- Download recordings to secure storage
+- Encrypt stored recordings
+- Implement access controls
+- Set retention policies
+
+### Analyze Regularly
+
+- Review transcripts for quality
+- Identify common issues
+- Train agents based on insights
+- Improve prompts based on patterns
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Call Metrics" icon="chart-bar" href="/api-reference/endpoint/get-call-metrics">
+    Get detailed call analytics
+  </Card>
+  
+  <Card title="Hangup Detection" icon="phone-hangup" href="/guides/call-management/hangup-detection">
+    Configure call termination settings
+  </Card>
+</CardGroup>

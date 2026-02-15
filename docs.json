@@ -18,7 +18,8 @@
             "group": "Getting Started",
             "pages": [
               "index",
-              "quickstart"
+              "quickstart",
+              "guides/quick-access"
             ]
           },
           {
@@ -26,6 +27,53 @@
             "pages": [
               "development",
               "essentials/dashboard-features"
+            ]
+          },
+          {
+            "group": "Batch Calling",
+            "pages": [
+              "guides/batch-calling/overview",
+              "guides/batch-calling/csv-format",
+              "guides/batch-calling/contact-format",
+              "guides/batch-calling/configuration",
+              "guides/batch-calling/monitoring",
+              "guides/batch-calling/webhooks"
+            ]
+          },
+          {
+            "group": "Multilingual Support",
+            "pages": [
+              "guides/multilingual/overview",
+              "guides/multilingual/languages",
+              "guides/multilingual/writing-prompts",
+              "guides/multilingual/voice-settings",
+              "guides/multilingual/dynamic-switching"
+            ]
+          },
+          {
+            "group": "Call Management",
+            "pages": [
+              "guides/call-management/overview",
+              "guides/call-management/duration-limits",
+              "guides/call-management/hangup-detection",
+              "guides/call-management/call-status",
+              "guides/call-management/recordings"
+            ]
+          },
+          {
+            "group": "Custom Functions",
+            "pages": [
+              "guides/custom-functions/overview",
+              "guides/custom-functions/api-integration",
+              "guides/custom-functions/examples",
+              "guides/custom-functions/best-practices",
+              "guides/custom-functions/testing"
+            ]
+          },
+          {
+            "group": "Analytics & Processing",
+            "pages": [
+              "guides/custom-metrics-processing"
             ]
           }
         ]

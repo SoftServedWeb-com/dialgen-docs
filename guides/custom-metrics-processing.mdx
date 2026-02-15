@@ -1,0 +1,788 @@
+---
+title: "Custom Metrics & Post-Call Processing"
+description: "Extract custom insights from calls using AI-powered metric analysis and post-call webhooks."
+---
+
+## What are Custom Metrics?
+
+Custom metrics allow you to define AI-powered analysis rules that extract specific insights from your calls automatically. Combined with post-call webhooks, you can send this data directly to your systems for further processing.
+
+---
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="AI-Powered Extraction" icon="brain" href="#how-it-works">
+    AI analyzes call transcripts to extract custom metrics
+  </Card>
+  
+  <Card title="Multiple Data Types" icon="database" href="#data-types">
+    Text, Numbers, Yes/No, and List data types
+  </Card>
+  
+  <Card title="Post-Call Webhooks" icon="webhook" href="#webhooks">
+    Send metrics to your external systems automatically
+  </Card>
+  
+  <Card title="Default Metrics" icon="chart-bar" href="#default-metrics">
+    Standard metrics included by default
+  </Card>
+</CardGroup>
+
+---
+
+## How It Works
+
+<Steps>
+  <Step title="Configure Metrics">
+    Define custom metrics with AI analysis prompts in agent settings
+  </Step>
+  
+  <Step title="Call Completes">
+    Dialgen records and transcribes the call
+  </Step>
+  
+  <Step title="AI Analysis">
+    AI extracts metrics based on your custom prompts
+  </Step>
+  
+  <Step title="Webhook Sent">
+    Complete call data and all metrics sent to your webhook URL
+  </Step>
+  
+  <Step title="Process Data">
+    Your system receives and processes the metrics
+  </Step>
+</Steps>
+
+---
+
+## Setting Up Custom Metrics
+
+<Warning>
+  Custom metrics are configured exclusively through the **Dialgen Dashboard**. There is no API endpoint for creating or managing custom metrics. All configuration must be done via the web interface.
+</Warning>
+
+### Dashboard Configuration
+
+1. Navigate to your agent settings
+2. Go to the **Metrics** tab
+3. Scroll to **Custom Metrics** section
+4. Click **Add Custom Metric**
+5. Configure:
+   - **Metric Name**: What to call this metric
+   - **Data Type**: Text, Number, Yes/No, or List
+   - **AI Analysis Prompt**: Instructions for AI extraction
+   - **Required**: Whether this metric must always have a value
+   - **Description**: Optional notes about this metric
+6. Click **Create Metric** or **Update Metric** to save
+
+Once configured, your custom metrics will be automatically applied to all calls for that agent.
+
+### Configuration Example
+
+```json
+{
+  "name": "Customer Satisfaction Score",
+  "dataType": "number",
+  "prompt": "Rate the customer's satisfaction level on a scale of 1-10 based on their tone, responses, and any explicit feedback given during the call.",
+  "isRequired": true,
+  "description": "Numerical satisfaction score for tracking customer happiness"
+}
+```
+
+---
+
+## Data Types
+
+Choose the appropriate data type for your metric:
+
+### Text (String)
+
+Store textual responses or extracted information.
+
+**Example:**
+```json
+{
+  "name": "Product Interest",
+  "dataType": "string",
+  "prompt": "What products or services did the customer express interest in?"
+}
+```
+
+**API Response:**
+```json
+{
+  "product_interest": "Enterprise plan and support services"
+}
+```
+
+### Number
+
+Store numerical values like scores, ratings, or counts.
+
+**Example:**
+```json
+{
+  "name": "Sentiment Score",
+  "dataType": "number",
+  "prompt": "Rate the customer's sentiment on a scale of -10 (very negative) to +10 (very positive)",
+  "isRequired": true
+}
+```
+
+**API Response:**
+```json
+{
+  "sentiment_score": 7
+}
+```
+
+### Yes/No (Boolean)
+
+Store true/false values for yes/no questions.
+
+**Example:**
+```json
+{
+  "name": "Callback Needed",
+  "dataType": "boolean",
+  "prompt": "Did the customer request a callback or follow-up call?"
+}
+```
+
+**API Response:**
+```json
+{
+  "callback_needed": true
+}
+```
+
+### List (Array)
+
+Store multiple values as a list.
+
+**Example:**
+```json
+{
+  "name": "Mentioned Issues",
+  "dataType": "array",
+  "prompt": "List all technical issues or problems mentioned by the customer during the call"
+}
+```
+
+**API Response:**
+```json
+{
+  "mentioned_issues": [
+    "Login timeout",
+    "Mobile app crashes",
+    "Password reset issues"
+  ]
+}
+```
+
+---
+
+## Default Metrics
+
+Dialgen includes standard metrics for every call. These are always included unless explicitly disabled:
+
+| Metric             | Type    | Description                                      |
+| ------------------ | ------- | ------------------------------------------------ |
+| `summary`          | string  | Overall call summary                             |
+| `intent`           | string  | Primary customer intent                          |
+| `sentiment`        | string  | Customer sentiment (positive/neutral/negative)   |
+| `confidence`       | number  | AI confidence in the analysis (0-1)              |
+| `keyPoints`        | array   | Key discussion points                            |
+| `actionItems`      | array   | Items requiring follow-up action                 |
+| `callStatus`       | string  | Call status (SUCCESS, UNRESOLVED, ESCALATION)    |
+| `callbackRequired` | string  | Whether callback is needed                       |
+| `promisedDate`     | string  | Any promised date mentioned                      |
+| `selfEvaluation`   | array   | Agent's self-evaluation of performance           |
+| `followUpAction`   | string  | Recommended follow-up action                     |
+| `ticketRaised`     | string  | Support ticket number if created                 |
+
+### Disable Default Metrics
+
+You can disable default metrics if you only want custom ones:
+
+1. In the **Metrics** tab
+2. Find **Default Dialgen Metrics** section
+3. Toggle **Enable** switch to OFF
+
+<Warning>
+  Disabling default metrics means standard analysis data won't be generated. Only do this if you have custom metrics that cover the metrics you need.
+</Warning>
+
+---
+
+## Post-Call Webhooks
+
+### What are Post-Call Webhooks?
+
+Post-call webhooks are HTTP POST requests sent to your server immediately after a call completes. They contain:
+
+- Complete call data
+- All default metrics
+- All custom metrics with their schema
+- Recording URL and transcript
+
+The schema of your defined custom metrics is automatically included in every webhook payload so your system knows how to process each metric.
+
+### Configuration
+
+1. Go to **Metrics** tab in agent settings
+2. Find **Post-Call Webhook** section
+3. Enter your webhook URL: `https://api.yourdomain.com/webhook`
+4. Save
+
+Once saved, all future calls will send metrics with the complete schema to this endpoint.
+
+### Webhook Payload with Schema
+
+```json
+{
+  "success": true,
+  "callData": {
+    "id": "call_789",
+    "contactId": "contact_ABC",
+    "agentId": "agent_XYZ",
+    "batchId": "batch_456",
+    "status": "COMPLETED",
+    "startTime": "2025-11-16T10:15:30.000Z",
+    "endTime": "2025-11-16T10:22:45.000Z",
+    "duration": 435,
+    "phoneNumber": "+14155552671",
+    "contactName": "Sarah Anderson",
+    "recordingUrl": "https://recordings.dialgen.ai/call_789.mp3",
+    
+    "transcription": [
+      {
+        "role": "assistant",
+        "content": "Hello! Thanks for calling TechCorp. How can I assist you today?"
+      },
+      {
+        "role": "user",
+        "content": "Hi, I'm interested in your enterprise solution"
+      },
+      {
+        "role": "assistant",
+        "content": "Great! Let me tell you about our enterprise features..."
+      }
+    ],
+    
+    // Default Dialgen metrics
+    "summary": "Customer called regarding enterprise solution pricing and features. Expressed strong interest in features like multi-team collaboration and advanced analytics. Requested pricing details.",
+    "intent": "SALES_INQUIRY",
+    "sentiment": "positive",
+    "confidence": 0.94,
+    "keyPoints": [
+      "Interested in enterprise plan",
+      "Wants multi-team collaboration",
+      "Needs advanced analytics"
+    ],
+    "actionItems": [
+      "Send enterprise pricing document",
+      "Schedule product demo",
+      "Provide ROI calculator"
+    ],
+    "callStatus": "SUCCESS",
+    "callbackRequired": "false",
+    "promisedDate": "2025-11-20",
+    "followUpAction": "Send pricing and schedule demo",
+    
+    // Custom metrics with schema
+    "customMetrics": {
+      "lead_score": {
+        "value": 92,
+        "schema": {
+          "type": "number",
+          "name": "Lead Score",
+          "description": "Lead quality rating on scale 1-100",
+          "isRequired": true
+        }
+      },
+      "use_case": {
+        "value": "Multi-team project collaboration platform for software development teams",
+        "schema": {
+          "type": "string",
+          "name": "Use Case",
+          "description": "Primary use case mentioned by customer",
+          "isRequired": true
+        }
+      },
+      "budget_range": {
+        "value": [
+          "$5000-10000 annually"
+        ],
+        "schema": {
+          "type": "array",
+          "name": "Budget Range",
+          "description": "Budget constraints mentioned",
+          "isRequired": false
+        }
+      },
+      "product_features_interest": {
+        "value": [
+          "Multi-team collaboration",
+          "Advanced analytics dashboard",
+          "API integration",
+          "Single sign-on",
+          "Audit logs"
+        ],
+        "schema": {
+          "type": "array",
+          "name": "Product Features Interest",
+          "description": "Features customer expressed interest in",
+          "isRequired": false
+        }
+      },
+      "has_budget_approved": {
+        "value": true,
+        "schema": {
+          "type": "boolean",
+          "name": "Has Budget Approved",
+          "description": "Whether customer has budget approval",
+          "isRequired": false
+        }
+      },
+      "competitor_mentioned": {
+        "value": "Slack, Monday.com",
+        "schema": {
+          "type": "string",
+          "name": "Competitor Mentioned",
+          "description": "Competing solutions mentioned",
+          "isRequired": false
+        }
+      }
+    }
+  },
+  
+  // Schema definition (sent once per webhook)
+  "metricSchema": {
+    "lead_score": {
+      "type": "number",
+      "name": "Lead Score",
+      "description": "Lead quality rating on scale 1-100",
+      "isRequired": true
+    },
+    "use_case": {
+      "type": "string",
+      "name": "Use Case",
+      "description": "Primary use case mentioned by customer",
+      "isRequired": true
+    },
+    "budget_range": {
+      "type": "array",
+      "name": "Budget Range",
+      "description": "Budget constraints mentioned",
+      "isRequired": false
+    },
+    "product_features_interest": {
+      "type": "array",
+      "name": "Product Features Interest",
+      "description": "Features customer expressed interest in",
+      "isRequired": false
+    },
+    "has_budget_approved": {
+      "type": "boolean",
+      "name": "Has Budget Approved",
+      "description": "Whether customer has budget approval",
+      "isRequired": false
+    },
+    "competitor_mentioned": {
+      "type": "string",
+      "name": "Competitor Mentioned",
+      "description": "Competing solutions mentioned",
+      "isRequired": false
+    }
+  }
+}
+```
+
+<Info>
+  The `metricSchema` field contains the complete definition of all custom metrics, including their type, description, and whether they're required. This allows your system to properly validate and process the custom metric values.
+</Info>
+
+---
+
+## Processing Webhooks
+
+### Node.js Example
+
+```javascript
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+
+app.post('/webhook', async (req, res) => {
+  const { callData, metricSchema } = req.body;
+  
+  try {
+    // Extract custom metrics
+    const metrics = callData.customMetrics || {};
+    
+    console.log('Call Analysis:');
+    console.log(`- Lead Score: ${metrics.lead_score?.value}`);
+    console.log(`- Use Case: ${metrics.use_case?.value}`);
+    console.log(`- Has Budget: ${metrics.has_budget_approved?.value}`);
+    console.log(`- Features Interest: ${metrics.product_features_interest?.value?.join(", ")}`);
+    
+    // Use metricSchema to validate and process metrics
+    Object.entries(metricSchema).forEach(([key, schema]) => {
+      const metricValue = metrics[key]?.value;
+      const isRequired = schema.isRequired;
+      
+      if (isRequired && !metricValue) {
+        console.warn(`Warning: Required metric "${schema.name}" is missing`);
+      }
+    });
+    
+    // Update your CRM with extracted metrics
+    await crm.updateContact({
+      id: callData.contactId,
+      lastCallDate: callData.startTime,
+      leadScore: metrics.lead_score?.value,
+      useCase: metrics.use_case?.value,
+      budgetApproved: metrics.has_budget_approved?.value,
+      featuresInterested: metrics.product_features_interest?.value
+    });
+    
+    // Create sales opportunity if lead score is high
+    if (metrics.lead_score?.value >= 80) {
+      await crm.createOpportunity({
+        contactId: callData.contactId,
+        title: `Enterprise Sales: ${metrics.use_case?.value}`,
+        value: 50000, // Estimated based on budget range
+        stage: 'DISCOVERY'
+      });
+    }
+    
+    // Schedule follow-up if callback requested (if you had such metric)
+    if (metrics.has_budget_approved?.value) {
+      await scheduling.createTask({
+        contactId: callData.contactId,
+        type: 'PRODUCT_DEMO',
+        dueDate: '2025-11-20',
+        priority: 'HIGH'
+      });
+    }
+    
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    res.status(200).json({ success: true }); // Still return 200 to prevent retries
+  }
+});
+
+app.listen(3000);
+```
+
+### Python Example
+
+```python
+from flask import Flask, request, jsonify
+from datetime import datetime, timedelta
+
+app = Flask(__name__)
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    data = request.json
+    call_data = data.get('callData', {})
+    metrics = call_data.get('customMetrics', {})
+    metric_schema = data.get('metricSchema', {})
+    
+    print('Call Analysis:')
+    print(f"- Lead Score: {metrics.get('lead_score', {}).get('value')}")
+    print(f"- Use Case: {metrics.get('use_case', {}).get('value')}")
+    print(f"- Has Budget: {metrics.get('has_budget_approved', {}).get('value')}")
+    features = metrics.get('product_features_interest', {}).get('value', [])
+    print(f"- Features Interest: {', '.join(features)}")
+    
+    # Validate required metrics using schema
+    for key, schema in metric_schema.items():
+        metric_value = metrics.get(key, {}).get('value')
+        is_required = schema.get('isRequired', False)
+        
+        if is_required and not metric_value:
+            print(f"Warning: Required metric '{schema.get('name')}' is missing")
+    
+    # Update CRM
+    crm.update_contact({
+        'id': call_data.get('contactId'),
+        'last_call': call_data.get('startTime'),
+        'lead_score': metrics.get('lead_score', {}).get('value'),
+        'use_case': metrics.get('use_case', {}).get('value'),
+        'budget_approved': metrics.get('has_budget_approved', {}).get('value'),
+        'features_interested': metrics.get('product_features_interest', {}).get('value')
+    })
+    
+    # Create opportunity if high lead score
+    lead_score = metrics.get('lead_score', {}).get('value', 0)
+    if lead_score >= 80:
+        crm.create_opportunity({
+            'contact_id': call_data.get('contactId'),
+            'title': f"Enterprise Sales: {metrics.get('use_case', {}).get('value')}",
+            'value': 50000,
+            'stage': 'DISCOVERY'
+        })
+    
+    # Schedule demo if budget is approved
+    if metrics.get('has_budget_approved', {}).get('value'):
+        scheduling.create_task({
+            'contact_id': call_data.get('contactId'),
+            'type': 'PRODUCT_DEMO',
+            'due_date': (datetime.now() + timedelta(days=4)).isoformat(),
+            'priority': 'HIGH'
+        })
+    
+    return jsonify({'success': True}), 200
+
+if __name__ == '__main__':
+    app.run(port=3000)
+```
+
+---
+
+## Best Practices
+
+### Writing Effective Prompts
+
+**❌ Vague:**
+```
+Extract the customer's feedback
+```
+
+**✅ Specific:**
+```
+Did the customer express satisfaction with the service? If yes, rate their satisfaction level 1-10. If no, explain why they were dissatisfied.
+```
+
+### Choose Right Data Types
+
+| Metric Type              | Best Data Type |
+| ------------------------ | -------------- |
+| Scores or ratings        | Number         |
+| Yes/No decisions         | Boolean        |
+| Multiple values          | Array          |
+| Descriptions or feedback | String         |
+
+### Required Fields
+
+Mark metrics as "Required" only when:
+- The metric must always have a value
+- Missing values would cause problems in your system
+- You want to validate quality
+
+### Testing Metrics
+
+1. **Create test agents** with your metrics
+2. **Run test calls** with various scenarios
+3. **Review webhook payloads** to verify accuracy
+4. **Adjust prompts** based on results
+5. **Deploy** when confident
+
+### Security
+
+- ✓ Validate webhook signatures if possible
+- ✓ Use HTTPS URLs only
+- ✓ Implement rate limiting
+- ✓ Log all webhook activity
+- ✓ Handle errors gracefully
+
+---
+
+## Common Use Cases
+
+### Lead Scoring
+
+```json
+{
+  "name": "Lead Score",
+  "dataType": "number",
+  "prompt": "Rate the lead quality on a scale of 1-100 based on their interest level, budget clarity, and buying timeline.",
+  "isRequired": true
+}
+```
+
+### Sentiment Tracking
+
+```json
+{
+  "name": "Customer Emotion",
+  "dataType": "string",
+  "prompt": "Describe the customer's emotional state during the call (happy, frustrated, neutral, angry, confused)"
+}
+```
+
+### Issue Documentation
+
+```json
+{
+  "name": "Technical Issues",
+  "dataType": "array",
+  "prompt": "List each technical issue or bug the customer reported"
+}
+```
+
+### Follow-up Actions
+
+```json
+{
+  "name": "Required Follow-ups",
+  "dataType": "array",
+  "prompt": "What specific actions must be taken before the next customer contact?"
+}
+```
+
+---
+
+## Troubleshooting
+
+### Webhook Not Received
+
+**Check:**
+- URL is correct and publicly accessible
+- Server is responding with 2xx status code
+- Firewall isn't blocking incoming requests
+- Check Dialgen logs for errors
+
+### Metrics Empty or Incorrect
+
+**Solutions:**
+- Review and clarify your AI prompt
+- Provide examples in the prompt
+- Use simpler, more direct language
+- Test with different call scenarios
+
+### High CPU Usage
+
+**Optimization:**
+- Reduce number of custom metrics
+- Simplify AI prompts
+- Disable default metrics if not needed
+- Increase webhook processing interval
+
+---
+
+## Retrieving Metrics via API
+
+In addition to webhooks, you can retrieve custom metrics by calling the `get-call-metric` endpoint. The endpoint will return the complete schema definition for all custom metrics configured for that agent.
+
+### Get Call Metrics Endpoint
+
+```bash
+curl --location 'https://sa.dialgen.ai/api/v1/call/get-metric?callId=call_789&userId=user_456&agentId=agent_XYZ&contactId=contact_ABC' \
+  -H 'Authorization: Bearer YOUR_API_KEY'
+```
+
+### Response with Custom Metric Schema
+
+```json
+{
+  "success": true,
+  "callData": {
+    "id": "call_789",
+    "status": "COMPLETED",
+    "duration": 435,
+    "recordingUrl": "https://recordings.dialgen.ai/call_789.mp3",
+    
+    // Default metrics...
+    "summary": "Customer inquiry about enterprise solution...",
+    "intent": "SALES_INQUIRY",
+    "sentiment": "positive",
+    
+    // Custom metrics with schema
+    "customMetrics": {
+      "lead_score": {
+        "value": 92,
+        "schema": {
+          "type": "number",
+          "name": "Lead Score",
+          "description": "Lead quality rating on scale 1-100",
+          "isRequired": true
+        }
+      },
+      "use_case": {
+        "value": "Multi-team project collaboration",
+        "schema": {
+          "type": "string",
+          "name": "Use Case",
+          "description": "Primary use case mentioned by customer",
+          "isRequired": true
+        }
+      },
+      "product_features_interest": {
+        "value": ["Multi-team collaboration", "Advanced analytics", "API integration"],
+        "schema": {
+          "type": "array",
+          "name": "Product Features Interest",
+          "description": "Features customer expressed interest in",
+          "isRequired": false
+        }
+      },
+      "has_budget_approved": {
+        "value": true,
+        "schema": {
+          "type": "boolean",
+          "name": "Has Budget Approved",
+          "description": "Whether customer has budget approval",
+          "isRequired": false
+        }
+      }
+    }
+  },
+  
+  "metricSchema": {
+    "lead_score": {
+      "type": "number",
+      "name": "Lead Score",
+      "description": "Lead quality rating on scale 1-100",
+      "isRequired": true
+    },
+    "use_case": {
+      "type": "string",
+      "name": "Use Case",
+      "description": "Primary use case mentioned by customer",
+      "isRequired": true
+    },
+    "product_features_interest": {
+      "type": "array",
+      "name": "Product Features Interest",
+      "description": "Features customer expressed interest in",
+      "isRequired": false
+    },
+    "has_budget_approved": {
+      "type": "boolean",
+      "name": "Has Budget Approved",
+      "description": "Whether customer has budget approval",
+      "isRequired": false
+    }
+  }
+}
+```
+
+<Info>
+  Both the `get-call-metric` endpoint and the `onCallComplete` webhook return the complete metric schema, allowing your application to properly understand and validate each custom metric's structure.
+</Info>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Agent Configuration" icon="settings" href="/guides/getting-started">
+    Learn how to configure agents
+  </Card>
+  
+  <Card title="API Reference" icon="code" href="/api-reference/endpoint/create-batch">
+    Complete API documentation
+  </Card>
+  
+  <Card title="Call Recordings" icon="file-audio" href="/guides/call-management/recordings">
+    Access call data and recordings
+  </Card>
+</CardGroup>

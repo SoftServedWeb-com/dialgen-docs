@@ -1,0 +1,295 @@
+---
+title: "Monitoring Batches"
+description: "Track batch progress, monitor call statuses, and analyze campaign performance."
+---
+
+## Batch Status Lifecycle
+
+Your batch progresses through these states:
+
+<Steps>
+  <Step title="Ingesting">
+    Contacts are being added to the database
+  </Step>
+  
+  <Step title="Scheduled">
+    Waiting for scheduled start time
+  </Step>
+  
+  <Step title="Pending">
+    Ready to start processing calls
+  </Step>
+  
+  <Step title="Processing">
+    Actively making calls
+  </Step>
+  
+  <Step title="Completed">
+    All calls finished
+  </Step>
+</Steps>
+
+---
+
+## Check Batch Status
+
+Get real-time status of your batch campaign:
+
+```bash
+curl --location 'https://sa.dialgen.ai/api/v1/status/batch?batchId=batch_123' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+### Response
+
+```json
+{
+  "batchId": "batch_123",
+  "calls": [
+    {
+      "callId": "call_456",
+      "status": "COMPLETED",
+      "startTime": "2025-11-15T14:31:02.456Z",
+      "phoneNumber": "+15551234567",
+      "duration": 62,
+      "recordingUrl": "https://..."
+    },
+    {
+      "callId": "call_789",
+      "status": "ONGOING",
+      "startTime": "2025-11-15T14:32:15.789Z",
+      "phoneNumber": "+15557654321"
+    }
+  ]
+}
+```
+
+<Info>
+  Live batch status is available for 30 days. After that, use the [Batch Statistics API](/api-reference/endpoint/get-batch-stats).
+</Info>
+
+---
+
+## Get Batch Statistics
+
+Retrieve high-level statistics for your campaign:
+
+```bash
+curl --location 'https://sa.dialgen.ai/api/v1/batch/check-status?batchId=batch_123&limit=20' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+### Response
+
+```json
+{
+  "batchId": "batch_123",
+  "status": "processing",
+  "priority": 5,
+  "statistics": {
+    "total": 1000,
+    "processed": 500,
+    "succeeded": 450,
+    "failed": 50,
+    "pending": 500,
+    "percentComplete": 50,
+    "successRate": 90
+  },
+  "performance": {
+    "callsPerSecond": 10.5,
+    "estimatedTimeRemaining": 3600,
+    "elapsedTime": 1800
+  },
+  "timestamps": {
+    "createdAt": "2025-11-15T14:00:00.000Z",
+    "startedAt": "2025-11-15T14:05:00.000Z",
+    "completedAt": null
+  }
+}
+```
+
+---
+
+## List All Batches
+
+Get a list of all your batch campaigns:
+
+```bash
+curl --location 'https://sa.dialgen.ai/api/v1/batch/list' \
+--header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+### Response
+
+```json
+[
+  {
+    "batchId": "batch_123",
+    "status": "processing",
+    "total": 1000,
+    "processed": 500,
+    "succeeded": 450,
+    "failed": 50,
+    "percentComplete": 50,
+    "createdAt": "2025-11-15T14:00:00.000Z",
+    "agentId": "agent_abc",
+    "priority": 5
+  }
+]
+```
+
+---
+
+## Key Metrics
+
+### Statistics
+
+| Metric          | Description                                    |
+| --------------- | ---------------------------------------------- |
+| `total`         | Total number of contacts in batch              |
+| `processed`     | Number of calls attempted                      |
+| `succeeded`     | Number of successful calls                     |
+| `failed`        | Number of failed calls                         |
+| `pending`       | Number of calls not yet attempted              |
+| `percentComplete` | Percentage of batch completed                |
+| `successRate`   | Percentage of successful calls                 |
+
+### Performance
+
+| Metric                    | Description                          |
+| ------------------------- | ------------------------------------ |
+| `callsPerSecond`          | Current call rate                    |
+| `estimatedTimeRemaining`  | Estimated seconds until completion   |
+| `elapsedTime`             | Seconds since batch started          |
+
+---
+
+## Call Statuses
+
+Individual calls can have these statuses:
+
+| Status      | Description                                    |
+| ----------- | ---------------------------------------------- |
+| `SCHEDULED` | Call is queued and waiting to be initiated    |
+| `ONGOING`   | Call is currently in progress                  |
+| `COMPLETED` | Call finished successfully                     |
+| `MISSED`    | Call was not answered                          |
+| `FAILED`    | Call failed due to technical error             |
+
+---
+
+## Monitoring Best Practices
+
+### Poll Regularly
+
+Check batch status every 30-60 seconds during processing:
+
+```javascript
+async function monitorBatch(batchId) {
+  let status = 'processing';
+  
+  while (status === 'processing' || status === 'pending') {
+    const response = await fetch(
+      `https://sa.dialgen.ai/api/v1/batch/check-status?batchId=${batchId}`,
+      {
+        headers: {
+          'Authorization': 'Bearer YOUR_API_KEY'
+        }
+      }
+    );
+    
+    const data = await response.json();
+    status = data.status;
+    
+    console.log(`Progress: ${data.statistics.percentComplete}%`);
+    
+    if (status !== 'completed') {
+      await new Promise(resolve => setTimeout(resolve, 30000)); // Wait 30s
+    }
+  }
+  
+  console.log('Batch completed!');
+}
+```
+
+### Use Webhooks
+
+Instead of polling, use webhooks for real-time notifications:
+
+```json
+{
+  "webhooks": {
+    "onCallComplete": "https://api.yourcompany.com/webhooks/call-complete",
+    "onBatchComplete": "https://api.yourcompany.com/webhooks/batch-complete"
+  }
+}
+```
+
+### Track Key Metrics
+
+Monitor these metrics for campaign health:
+
+- **Success Rate**: Should be > 70%
+- **Average Duration**: Indicates conversation quality
+- **Calls Per Second**: Verify rate limiting is working
+- **Failed Calls**: Investigate if > 20%
+
+---
+
+## Dashboard Monitoring
+
+View batch progress in the Dialgen dashboard:
+
+1. Navigate to **Batches**
+2. Click on your batch campaign
+3. View real-time statistics and call list
+4. Filter calls by status
+5. Download reports and transcripts
+
+---
+
+## Troubleshooting
+
+### Low Success Rate
+
+**Problem**: Success rate < 50%
+
+**Solutions**:
+- Check phone number quality
+- Verify calling hours match timezone
+- Review agent prompt effectiveness
+- Adjust retry strategy
+
+### Slow Processing
+
+**Problem**: Batch taking longer than expected
+
+**Solutions**:
+- Increase `maxCallsPerSecond`
+- Check telephony provider limits
+- Verify agent is active
+- Review system status
+
+### High Failure Rate
+
+**Problem**: Many calls failing
+
+**Solutions**:
+- Validate phone number format
+- Check API key permissions
+- Verify agent configuration
+- Review error messages in call details
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Webhooks" icon="webhook" href="/guides/batch-calling/webhooks">
+    Set up real-time notifications
+  </Card>
+  
+  <Card title="Call Metrics" icon="chart-bar" href="/api-reference/endpoint/get-call-metrics">
+    Analyze individual call performance
+  </Card>
+</CardGroup>

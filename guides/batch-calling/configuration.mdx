@@ -1,0 +1,280 @@
+---
+title: "Batch Configuration"
+description: "Configure priority, rate limiting, scheduling, and retry strategies for your batch campaigns."
+---
+
+## Configuration Options
+
+Control how your batch campaign executes with these optional settings:
+
+```json
+{
+  "options": {
+    "priority": 5,
+    "maxCallsPerSecond": 10,
+    "scheduledStartTime": "2025-11-16T09:00:00.000Z",
+    "timezone": "UTC",
+    "retryStrategy": {
+      "maxAttempts": 3,
+      "noAnswerDelay": 3600000,
+      "busyDelay": 300000
+    },
+    "webhooks": {
+      "onBatchComplete": "https://api.your-crm.com/webhook/batch-complete",
+      "onCallComplete": "https://api.your-crm.com/webhook/call-complete"
+    },
+    "tags": ["Q4_campaign", "high_priority"]
+  }
+}
+```
+
+---
+
+## Priority
+
+Set the priority level for your batch campaign:
+
+- **Range**: 1-10
+- **Default**: 5
+- **Behavior**: Higher priority batches are processed first
+
+```json
+{
+  "priority": 8
+}
+```
+
+<Tip>
+  Use higher priorities (7-10) for time-sensitive campaigns like appointment reminders or urgent notifications.
+</Tip>
+
+---
+
+## Rate Limiting
+
+Control the number of calls initiated per second:
+
+- **Field**: `maxCallsPerSecond`
+- **Range**: 1-30
+- **Default**: 10
+
+```json
+{
+  "maxCallsPerSecond": 15
+}
+```
+
+### Best Practices
+
+- **Start low**: Begin with 5-10 CPS and scale up
+- **Monitor quality**: Watch for connection issues
+- **Check limits**: Verify your telephony provider's limits
+- **Consider timezone**: Adjust rates for business hours
+
+<Warning>
+  Setting too high a rate may overwhelm your telephony provider or trigger spam filters.
+</Warning>
+
+---
+
+## Scheduling
+
+Schedule your batch to start at a specific time:
+
+```json
+{
+  "scheduledStartTime": "2025-11-16T09:00:00.000Z",
+  "timezone": "America/New_York"
+}
+```
+
+### Fields
+
+- **`scheduledStartTime`**: ISO 8601 datetime string
+- **`timezone`**: IANA timezone identifier
+- **Requirement**: Must be a future time
+
+### Common Timezones
+
+- `America/New_York` - Eastern Time
+- `America/Chicago` - Central Time
+- `America/Los_Angeles` - Pacific Time
+- `Europe/London` - UK Time
+- `Asia/Tokyo` - Japan Time
+
+<Info>
+  Schedule batches during business hours in your contacts' timezone for better answer rates.
+</Info>
+
+---
+
+## Retry Strategy
+
+Configure how failed calls are retried:
+
+```json
+{
+  "retryStrategy": {
+    "maxAttempts": 3,
+    "noAnswerDelay": 3600000,
+    "busyDelay": 300000
+  }
+}
+```
+
+### Max Attempts
+
+- **Field**: `maxAttempts`
+- **Range**: 1-5
+- **Default**: 3
+
+Number of times to retry calling a contact.
+
+### No Answer Delay
+
+- **Field**: `noAnswerDelay`
+- **Unit**: Milliseconds
+- **Default**: 3600000 (1 hour)
+
+Delay before retrying when call is not answered.
+
+### Busy Delay
+
+- **Field**: `busyDelay`
+- **Unit**: Milliseconds
+- **Default**: 300000 (5 minutes)
+
+Delay before retrying when line is busy.
+
+### Recommended Settings
+
+| Use Case              | Max Attempts | No Answer Delay | Busy Delay |
+| --------------------- | ------------ | --------------- | ---------- |
+| Urgent notifications  | 2            | 30 min          | 5 min      |
+| Standard outreach     | 3            | 1 hour          | 15 min     |
+| Low-priority campaigns| 2            | 4 hours         | 30 min     |
+
+---
+
+## Webhooks
+
+Receive HTTP notifications for batch events:
+
+```json
+{
+  "webhooks": {
+    "onBatchComplete": "https://api.your-crm.com/webhook/batch-complete",
+    "onCallComplete": "https://api.your-crm.com/webhook/call-complete",
+    "onBatchFailed": "https://api.your-crm.com/webhook/batch-failed"
+  }
+}
+```
+
+### Available Webhooks
+
+#### onBatchComplete
+
+Triggered when all calls in the batch are finished.
+
+```json
+{
+  "event": "batch.completed",
+  "batchId": "batch_123",
+  "statistics": {
+    "total": 1000,
+    "succeeded": 850,
+    "failed": 150
+  }
+}
+```
+
+#### onCallComplete
+
+Triggered after each individual call completes.
+
+```json
+{
+  "event": "call.completed",
+  "callId": "call_456",
+  "status": "COMPLETED",
+  "duration": 180,
+  "summary": "Call summary text..."
+}
+```
+
+#### onBatchFailed
+
+Triggered if the batch fails to process.
+
+```json
+{
+  "event": "batch.failed",
+  "batchId": "batch_123",
+  "error": "Insufficient credits"
+}
+```
+
+<Info>
+  See the [Webhooks Guide](/guides/batch-calling/webhooks) for complete webhook documentation.
+</Info>
+
+---
+
+## Tags
+
+Add tags to organize and filter batches:
+
+```json
+{
+  "tags": ["Q4_campaign", "high_priority", "lead_qualification"]
+}
+```
+
+### Use Cases
+
+- **Campaign tracking**: Group related batches
+- **Filtering**: Find batches by category
+- **Reporting**: Analyze performance by tag
+- **Organization**: Manage multiple campaigns
+
+---
+
+## Complete Example
+
+```json
+{
+  "agentId": "agent_123",
+  "userId": "user_456",
+  "contacts": [...],
+  "options": {
+    "priority": 7,
+    "maxCallsPerSecond": 12,
+    "scheduledStartTime": "2025-11-16T09:00:00.000Z",
+    "timezone": "America/New_York",
+    "retryStrategy": {
+      "maxAttempts": 3,
+      "noAnswerDelay": 3600000,
+      "busyDelay": 300000
+    },
+    "webhooks": {
+      "onBatchComplete": "https://api.yourcompany.com/webhooks/batch-complete",
+      "onCallComplete": "https://api.yourcompany.com/webhooks/call-complete"
+    },
+    "tags": ["Q4_2025", "lead_qualification", "high_value"]
+  }
+}
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Monitoring" icon="chart-line" href="/guides/batch-calling/monitoring">
+    Track batch progress and performance
+  </Card>
+  
+  <Card title="Webhooks" icon="webhook" href="/guides/batch-calling/webhooks">
+    Set up webhook notifications
+  </Card>
+</CardGroup>

@@ -1,0 +1,171 @@
+---
+title: "Supported Languages"
+description: "Complete list of languages supported by Dialgen AI agents."
+---
+
+## Available Languages
+
+Dialgen supports the following languages for voice AI agents:
+
+| Language                    | Language Code | Region              |
+| --------------------------- | ------------- | ------------------- |
+| English (United States)     | en-US         | United States       |
+| English (United Kingdom)    | en-GB         | United Kingdom      |
+| English (Australia)         | en-AU         | Australia           |
+| English (India)             | en-IN         | India               |
+| Spanish (Spain)             | es-ES         | Spain               |
+| Spanish (Mexico)            | es-MX         | Mexico              |
+| Spanish (Argentina)         | es-AR         | Argentina           |
+| French (France)             | fr-FR         | France              |
+| French (Canada)             | fr-CA         | Canada              |
+| German                      | de-DE         | Germany             |
+| Italian                     | it-IT         | Italy               |
+| Portuguese (Brazil)         | pt-BR         | Brazil              |
+| Portuguese (Portugal)       | pt-PT         | Portugal            |
+| Arabic (Saudi Arabia)       | ar-SA         | Saudi Arabia        |
+| Hindi                       | hi-IN         | India               |
+| Tamil                       | ta-IN         | India               |
+| Telugu                      | te-IN         | India               |
+| Bengali                     | bn-IN         | India               |
+| Kannada                     | kn-IN         | India               |
+| Malayalam                   | ml-IN         | India               |
+| Marathi                     | mr-IN         | India               |
+| Gujarati                    | gu-IN         | India               |
+| Punjabi                     | pa-IN         | India               |
+| Odia                        | or-IN         | India               |
+| Japanese                    | ja-JP         | Japan               |
+| Korean                      | ko-KR         | South Korea         |
+| Chinese (Mandarin)          | zh-CN         | China               |
+| Dutch                       | nl-NL         | Netherlands         |
+| Polish                      | pl-PL         | Poland              |
+| Russian                     | ru-RU         | Russia              |
+| Turkish                     | tr-TR         | Turkey              |
+
+<Note>
+  Additional languages can be added upon request. Contact support if you need a specific language.
+</Note>
+
+---
+
+## Language Configuration
+
+### In Dashboard
+
+1. Navigate to your agent settings
+2. Go to **Voice** tab
+3. Select **Agent Language** from dropdown
+4. Choose your target language
+5. Save changes
+
+### Via API
+
+```json
+{
+  "basicDetails": {
+    "agentLanguage": "es-ES"
+  }
+}
+```
+
+---
+
+## Voice Availability
+
+Different languages have different voice options:
+
+| Language        | Available Voices | Premium Voices |
+| --------------- | ---------------- | -------------- |
+| English         | 20+              | ✓              |
+| Spanish         | 15+              | ✓              |
+| French          | 10+              | ✓              |
+| German          | 8+               | ✓              |
+| Arabic          | 8+               | ✓              |
+| Hindi           | 8+               | ✓              |
+| Tamil           | 6+               | ✓              |
+| Telugu          | 6+               | ✓              |
+| Kannada         | 6+               | ✓              |
+| Bengali         | 6+               | -              |
+| Malayalam       | 6+               | -              |
+| Marathi         | 6+               | ✓              |
+| Gujarati        | 6+               | -              |
+| Punjabi         | 6+               | -              |
+| Odia            | 4+               | -              |
+| Japanese        | 8+               | ✓              |
+| Other           | 3-5              | -              |
+
+<Tip>
+  Premium voices offer more natural intonation and better pronunciation. Available for popular languages.
+</Tip>
+
+---
+
+## Regional Variants
+
+Some languages have regional variants with different accents and vocabulary:
+
+### Spanish
+
+- **es-ES**: European Spanish (Spain)
+- **es-MX**: Mexican Spanish
+- **es-AR**: Argentine Spanish
+
+### English
+
+- **en-US**: American English
+- **en-GB**: British English
+- **en-AU**: Australian English
+- **en-IN**: Indian English
+
+### French
+
+- **fr-FR**: European French
+- **fr-CA**: Canadian French
+
+### Arabic
+
+- **ar-SA**: Saudi Arabic (Modern Standard Arabic with Saudi dialect)
+
+### Indian Languages
+
+Dialgen supports multiple Indian languages, each optimized for native speakers:
+
+- **hi-IN**: Hindi (Devanagari script)
+- **ta-IN**: Tamil (Tamil script)
+- **te-IN**: Telugu (Telugu script)
+- **bn-IN**: Bengali (Bengali script)
+- **kn-IN**: Kannada (Kannada script)
+- **ml-IN**: Malayalam (Malayalam script)
+- **mr-IN**: Marathi (Devanagari script)
+- **gu-IN**: Gujarati (Gujarati script)
+- **pa-IN**: Punjabi (Gurmukhi script)
+- **or-IN**: Odia (Odia script)
+
+<Info>
+  Choose the variant that matches your target audience for better engagement. For Indian languages, always write prompts in the native script, not romanized versions.
+</Info>
+
+---
+
+## Testing Languages
+
+Use the voice preview feature to test:
+
+1. Select a language
+2. Choose a voice
+3. Enter sample text
+4. Play preview
+5. Adjust settings as needed
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Writing Prompts" icon="pen" href="/guides/multilingual/writing-prompts">
+    Learn how to write prompts in different languages
+  </Card>
+  
+  <Card title="Voice Settings" icon="microphone" href="/guides/multilingual/voice-settings">
+    Configure voice and language settings
+  </Card>
+</CardGroup>

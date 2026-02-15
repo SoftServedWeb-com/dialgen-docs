@@ -1,0 +1,199 @@
+---
+title: "Voice Settings"
+description: "Configure voice, accent, speed, and language-specific settings for your agents."
+---
+
+## Voice Configuration
+
+Each language has specific voice options and settings:
+
+---
+
+## Selecting Voices
+
+### By Language
+
+1. Select your target language first
+2. Available voices filter automatically
+3. Preview voices before selecting
+4. Choose based on gender and tone
+
+### Voice Quality Tiers
+
+| Tier     | Quality | Languages | Cost    |
+| -------- | ------- | --------- | ------- |
+| Standard | Good    | All       | Standard|
+| Premium  | Excellent| Major    | +20%    |
+| Neural   | Best    | Select   | +50%    |
+
+<Tip>
+  Premium and neural voices provide more natural intonation and better pronunciation for professional use cases.
+</Tip>
+
+---
+
+## Voice Speed
+
+Adjust speaking speed for different languages:
+
+```json
+{
+  "voiceSpeed": 1.0
+}
+```
+
+- **Range**: 0.5 - 2.0
+- **Default**: 1.0
+- **Recommended**: 0.8 - 1.2 for most use cases
+
+### Language-Specific Recommendations
+
+| Language | Recommended Speed | Notes                    |
+| -------- | ----------------- | ------------------------ |
+| English  | 1.0               | Standard pace            |
+| Spanish  | 0.9               | Slightly slower          |
+| French   | 0.95              | Clear pronunciation      |
+| German   | 0.9               | Complex compound words   |
+| Hindi    | 0.85              | Ensure clarity           |
+| Japanese | 1.0               | Standard pace works well |
+
+---
+
+## Voice Gender
+
+Select voice gender based on your brand and use case:
+
+```json
+{
+  "voiceGender": "female"
+}
+```
+
+- **Options**: `male`, `female`, `neutral`
+- **Availability**: Varies by language
+
+<Note>
+  Not all languages have all gender options. Check available voices for your selected language.
+</Note>
+
+---
+
+## Testing Voices
+
+### Preview Feature
+
+1. Navigate to agent settings
+2. Go to **Voice** tab
+3. Select language and voice
+4. Enter sample text
+5. Click **Preview**
+6. Adjust settings as needed
+
+### Sample Text
+
+Use realistic conversation samples:
+
+**English:**
+```text
+Hello! Thank you for calling. How can I help you today?
+```
+
+**Spanish:**
+```text
+¡Hola! Gracias por llamar. ¿En qué puedo ayudarle hoy?
+```
+
+**French:**
+```text
+Bonjour ! Merci d'avoir appelé. Comment puis-je vous aider aujourd'hui ?
+```
+
+---
+
+## Advanced Settings
+
+### Pitch
+
+Adjust voice pitch (where supported):
+
+```json
+{
+  "voicePitch": 0
+}
+```
+
+- **Range**: -20 to +20
+- **Default**: 0
+- **Note**: Not available for all voices
+
+### Stability
+
+Control voice stability vs. expressiveness:
+
+```json
+{
+  "voiceStability": 0.5
+}
+```
+
+- **Range**: 0.0 - 1.0
+- **Lower**: More expressive, varied
+- **Higher**: More stable, consistent
+
+---
+
+## Language-Specific Considerations
+
+### Tonal Languages (Chinese, Vietnamese)
+
+- Use neural voices for better tone accuracy
+- Test thoroughly with native speakers
+- Adjust speed for clarity
+
+### Languages with Compound Words (German, Dutch)
+
+- Slightly slower speed recommended
+- Ensure proper word separation
+- Test with long compound words
+
+### Languages with Complex Scripts (Hindi, Arabic)
+
+- Always use native script
+- Verify all diacritical marks
+- Test pronunciation carefully
+
+---
+
+## Best Practices
+
+### Match Voice to Brand
+
+- **Professional**: Use formal, clear voices
+- **Friendly**: Use warm, expressive voices
+- **Technical**: Use clear, measured voices
+
+### Test with Native Speakers
+
+- Get feedback from native speakers
+- Test in real-world conditions
+- Adjust based on feedback
+
+### Consider Context
+
+- **Customer support**: Clear, patient voice
+- **Sales**: Enthusiastic, engaging voice
+- **Reminders**: Friendly, brief voice
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Writing Prompts" icon="pen" href="/guides/multilingual/writing-prompts">
+    Learn how to write effective multilingual prompts
+  </Card>
+  
+  <Card title="Dynamic Switching" icon="arrows-left-right" href="/guides/multilingual/dynamic-switching">
+    Enable language detection and switching
+  </Card>
+</CardGroup>

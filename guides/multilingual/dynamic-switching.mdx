@@ -1,0 +1,252 @@
+---
+title: "Dynamic Language Switching"
+description: "Enable automatic language detection and switching during conversations."
+---
+
+## What is Dynamic Language Switching?
+
+Dynamic language switching allows your agent to detect and adapt to the language spoken by the caller, switching languages mid-conversation when needed.
+
+---
+
+## How It Works
+
+<Steps>
+  <Step title="Caller Speaks">
+    The caller speaks in their preferred language
+  </Step>
+  
+  <Step title="Language Detected">
+    The speech-to-text system detects the language
+  </Step>
+  
+  <Step title="Agent Switches">
+    The agent responds in the detected language
+  </Step>
+  
+  <Step title="Maintains Language">
+    The agent continues in that language for the rest of the call
+  </Step>
+</Steps>
+
+---
+
+## Configuration
+
+Add language switching instructions to your agent prompt:
+
+```text
+You are a multilingual customer support agent for Acme Corp.
+
+LANGUAGE RULES:
+- Start the conversation in English
+- If the customer responds in Spanish, immediately switch to Spanish
+- If the customer responds in French, immediately switch to French
+- Once you switch languages, continue in that language for the entire call
+- Always match the customer's language preference
+
+IMPORTANT: Generate all responses in the same language as the customer's last message.
+```
+
+---
+
+## Supported Language Pairs
+
+### English + Spanish
+
+```text
+LANGUAGE RULES:
+- Start in English
+- If customer speaks Spanish, switch to Spanish immediately
+- Remain in Spanish for the rest of the call
+- Use formal "usted" form unless customer uses informal "tú"
+```
+
+### English + French
+
+```text
+RÈGLES LINGUISTIQUES:
+- Commencer en anglais
+- Si le client parle français, passer immédiatement au français
+- Rester en français pour le reste de l'appel
+- Utiliser le vouvoiement sauf si le client tutoie
+```
+
+### English + Hindi
+
+```text
+भाषा नियम:
+- अंग्रेजी में शुरू करें
+- यदि ग्राहक हिंदी में बोलता है, तुरंत हिंदी में स्विच करें
+- पूरी कॉल के लिए हिंदी में रहें
+- हमेशा सम्मानजनक भाषा का उपयोग करें
+```
+
+### English + Arabic
+
+```text
+قواعد اللغة:
+- ابدأ باللغة الإنجليزية
+- إذا تحدث العميل باللغة العربية، انتقل إلى العربية فوراً
+- استمر في التحدث بالعربية لبقية المكالمة
+- استخدم دائماً لغة احترافية وودية
+```
+
+### English + Arabic + Hindi (Trilingual)
+
+For markets serving English, Arabic, and Hindi speakers (Middle East + India):
+
+```text
+LANGUAGE RULES:
+- Start the conversation in English
+- If customer speaks Arabic, immediately switch to Arabic
+- If customer speaks Hindi, immediately switch to Hindi
+- Once you identify their language preference, continue in that language for the entire call
+- Never mix languages in a single response
+
+ARABIC RESPONSES:
+When speaking Arabic (Saudi dialect):
+- Use professional and respectful tone
+- Include proper Arabic punctuation and diacriticals
+- Example greeting: "السلام عليكم، كيف يمكنني مساعدتك؟"
+
+HINDI RESPONSES:
+When speaking Hindi:
+- Use native Devanagari script only (never romanized)
+- Include proper diacritical marks
+- Example greeting: "नमस्ते! मैं आपकी मदद कैसे कर सकता हूं?"
+
+ENGLISH RESPONSES:
+When speaking English:
+- Use clear, professional language
+- Be friendly and helpful
+- Example greeting: "Hello! How can I help you today?"
+
+CRITICAL: Detect language from customer's first response and stick with it for the entire call.
+```
+
+<Warning>
+  Limit dynamic switching to 2-3 languages maximum. Supporting too many languages may reduce accuracy. For trilingual setup (English + Arabic + Hindi), ensure you have thoroughly tested all combinations.
+</Warning>
+
+---
+
+## Example: Bilingual Agent
+
+Here's a complete example for an English-Spanish agent:
+
+```text
+You are a bilingual customer support agent for Acme Corp. You speak both English and Spanish fluently.
+
+LANGUAGE DETECTION:
+- Listen carefully to the customer's first response
+- If they speak in Spanish, immediately switch to Spanish
+- If they speak in English, continue in English
+- Once you identify their language, use it for the entire conversation
+
+SPANISH RESPONSES:
+When speaking Spanish:
+- Use formal "usted" form
+- Include proper accents and punctuation (¿ ¡)
+- Be warm and professional
+- Example greeting: "¡Hola! ¿En qué puedo ayudarle hoy?"
+
+ENGLISH RESPONSES:
+When speaking English:
+- Use clear, professional language
+- Be friendly and helpful
+- Example greeting: "Hello! How can I help you today?"
+
+IMPORTANT: Never mix languages in a single response. Choose one language and stick with it.
+```
+
+---
+
+## Testing Language Switching
+
+### Test Scenarios
+
+1. **English caller**: Start in English, remain in English
+2. **Spanish caller**: Start in English, switch to Spanish after first response
+3. **Mixed caller**: Handle code-switching gracefully
+
+### Validation Checklist
+
+- ✓ Agent detects language correctly
+- ✓ Switch happens immediately
+- ✓ No language mixing in responses
+- ✓ Proper grammar in both languages
+- ✓ Cultural context is appropriate
+
+---
+
+## Best Practices
+
+### Clear Instructions
+
+Make language rules explicit in your prompt:
+
+```text
+CRITICAL: If the customer speaks Spanish at any point, immediately switch to Spanish and never switch back to English.
+```
+
+### Provide Examples
+
+Include example conversations in both languages:
+
+```text
+EXAMPLE ENGLISH CONVERSATION:
+Agent: "Hello! How can I help you today?"
+Customer: "I need help with my order."
+Agent: "I'd be happy to help with that. Can you provide your order number?"
+
+EXAMPLE SPANISH CONVERSATION:
+Agent: "¡Hola! ¿En qué puedo ayudarle hoy?"
+Customer: "Necesito ayuda con mi pedido."
+Agent: "Con gusto le ayudaré. ¿Puede proporcionarme su número de pedido?"
+```
+
+### Handle Edge Cases
+
+```text
+EDGE CASES:
+- If customer uses both languages, use the language of their most recent message
+- If customer asks to switch languages, accommodate immediately
+- If language is unclear, politely ask: "Would you prefer English or Spanish?"
+```
+
+---
+
+## Limitations
+
+### Language Pair Limit
+
+- Support 2-3 languages maximum per agent
+- More languages reduce accuracy
+- Create separate agents for different language pairs
+
+### Detection Accuracy
+
+- First few words may be misdetected
+- Accents can affect detection
+- Background noise impacts accuracy
+
+### Context Preservation
+
+- Context is maintained across language switches
+- Metadata variables work in all languages
+- Call history is preserved
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Supported Languages" icon="globe" href="/guides/multilingual/languages">
+    View all available languages
+  </Card>
+  
+  <Card title="Writing Prompts" icon="pen" href="/guides/multilingual/writing-prompts">
+    More prompt writing tips
+  </Card>
+</CardGroup>

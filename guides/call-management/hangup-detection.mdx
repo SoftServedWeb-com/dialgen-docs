@@ -1,0 +1,194 @@
+---
+title: "Hangup Detection"
+description: "Configure silence detection and custom prompts for natural call endings."
+---
+
+## Hangup Methods
+
+Dialgen offers two methods for intelligent call termination:
+
+---
+
+## Silence Detection
+
+Automatically end calls when no audio is detected:
+
+```json
+{
+  "silenceTimeout": 12
+}
+```
+
+- **Unit**: Seconds
+- **Default**: 10
+- **Recommended**: 8-15 seconds
+
+### How It Works
+
+1. Timer starts when agent finishes speaking
+2. Timer resets if user speaks
+3. If timer reaches threshold, call ends
+4. Hangup message plays (if configured)
+5. Call terminates
+
+### Recommended Timeouts
+
+| Use Case              | Timeout  |
+| --------------------- | -------- |
+| Quick inquiries       | 8-10s    |
+| Standard support      | 10-15s   |
+| Complex consultations | 15-20s   |
+
+<Tip>
+  Too short may disconnect during natural pauses. Too long wastes time and credits.
+</Tip>
+
+---
+
+## Prompt-Based Detection
+
+Add hangup logic to your agent prompt:
+
+```text
+HANGUP RULES:
+- End the call when the customer says "goodbye," "that's all," or "thank you, bye"
+- End when the customer confirms their issue is resolved
+- End when the customer says they have no more questions
+- Always thank the customer before ending
+```
+
+### Example Prompt
+
+```text
+You are a customer support agent for Acme Corp.
+
+Your goal is to help customers and resolve their issues.
+
+HANGUP DETECTION:
+A conversation is complete when:
+1. The customer explicitly says they want to end the call
+2. The customer confirms their issue is fully resolved
+3. The customer says they have no further questions
+
+When ending the call:
+- Thank the customer for calling
+- Confirm their issue is resolved
+- Offer to help again in the future
+- Say goodbye warmly
+```
+
+<Warning>
+  Prompt-based detection relies on AI interpretation and may not be 100% accurate. Test thoroughly.
+</Warning>
+
+---
+
+## Hangup Messages
+
+Configure a custom closing message:
+
+```json
+{
+  "hangupMessage": "Thank you for calling Acme Corp, {name}. Have a wonderful day!"
+}
+```
+
+### Available Variables
+
+- `{name}` - Contact's name
+- `{company}` - Contact's company
+- `{email}` - Contact's email
+- Any custom metadata variables
+
+### Examples
+
+**Professional:**
+```text
+Thank you for your time, {name}. If you need further assistance, please don't hesitate to call us back.
+```
+
+**Friendly:**
+```text
+Thanks so much for chatting with me today, {name}! Have an awesome day!
+```
+
+**Multilingual (Spanish):**
+```text
+Gracias por llamar, {name}. ¡Que tenga un excelente día!
+```
+
+---
+
+## Combining Methods
+
+Use both silence detection and prompt-based hangup:
+
+```json
+{
+  "silenceTimeout": 12,
+  "hangupMessage": "Thank you for calling, {name}!"
+}
+```
+
+```text
+HANGUP RULES:
+- End when customer says goodbye or confirms they're done
+- End when issue is fully resolved
+- If there's silence for more than 10 seconds, ask: "Are you still there? Is there anything else I can help with?"
+```
+
+### Benefits
+
+- **Silence detection**: Catches abandoned calls
+- **Prompt-based**: Natural, context-aware endings
+- **Hangup message**: Professional closing
+
+---
+
+## Hangup Status Codes
+
+Track why calls ended:
+
+| Status        | Description                        |
+| ------------- | ---------------------------------- |
+| `COMPLETED`   | Call ended normally                |
+| `USER_HANGUP` | User hung up                       |
+| `SILENCE`     | Ended due to silence timeout       |
+| `TIMEOUT`     | Reached maximum duration           |
+| `FAILED`      | Technical error                    |
+
+<Info>
+  Status codes are available in call metrics and webhook payloads.
+</Info>
+
+---
+
+## Troubleshooting
+
+### Calls Ending Too Early
+
+**Solutions:**
+- Increase silence timeout to 15-20 seconds
+- Make hangup conditions more specific
+- Review call recordings
+
+### Calls Running Too Long
+
+**Solutions:**
+- Decrease silence timeout to 8-10 seconds
+- Add explicit hangup conditions to prompt
+- Implement duration limits
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Duration Limits" icon="clock" href="/guides/call-management/duration-limits">
+    Set maximum call duration
+  </Card>
+  
+  <Card title="Call Status" icon="signal" href="/guides/call-management/call-status">
+    Monitor call status and lifecycle
+  </Card>
+</CardGroup>

@@ -1,0 +1,240 @@
+---
+title: "Writing Multilingual Prompts"
+description: "Best practices for writing effective prompts in non-English languages."
+---
+
+## Use Native Scripts
+
+For best results, always write prompts in the native script of your target language, not phonetic English.
+
+---
+
+## Why Native Scripts Matter
+
+### Better Pronunciation
+
+Native scripts help the text-to-speech engine pronounce words correctly with proper intonation.
+
+### Accurate Language Detection
+
+Helps the AI identify the intended language and maintain consistency.
+
+### Cultural Context
+
+Better understanding of tone, formality, and cultural nuances.
+
+### Prevents Misclassification
+
+Avoids the AI treating romanized text as English.
+
+---
+
+## Language-Specific Examples
+
+### Spanish
+
+**❌ Incorrect (No Accents):**
+```text
+Hola! Como estas? Vamos a comenzar.
+```
+
+**✅ Correct (With Accents):**
+```text
+¡Hola! ¿Cómo estás? Vamos a comenzar.
+```
+
+**Key Points:**
+- Use inverted punctuation (¿ ¡)
+- Include accent marks (á, é, í, ó, ú, ñ)
+- Consider formal (usted) vs. informal (tú)
+
+### French
+
+**❌ Incorrect:**
+```text
+Bonjour! Comment ca va? Nous allons commencer.
+```
+
+**✅ Correct:**
+```text
+Bonjour ! Comment ça va ? Nous allons commencer.
+```
+
+**Key Points:**
+- Include all accent marks (é, è, ê, à, ç)
+- Use proper apostrophes for contractions
+- Add space before punctuation (!, ?, :, ;)
+
+### Hindi
+
+**❌ Incorrect (Romanized):**
+```text
+Namaste! Aap kaise hain? Main aapki madad kar sakta hoon.
+```
+
+**✅ Correct (Devanagari):**
+```text
+नमस्ते! आप कैसे हैं? मैं आपकी मदद कर सकता हूं।
+```
+
+**Key Points:**
+- Always use Devanagari script
+- Never use romanized Hindi
+- Include proper diacritical marks
+
+### German
+
+**❌ Incorrect:**
+```text
+Guten Tag! Wie kann ich Ihnen helfen?
+```
+
+**✅ Correct:**
+```text
+Guten Tag! Wie kann ich Ihnen helfen?
+```
+
+**Key Points:**
+- Include umlauts (ä, ö, ü) and ß
+- Capitalize all nouns
+- Use formal (Sie) vs. informal (du) appropriately
+
+---
+
+## Tips for Writing
+
+### Use Input Tools
+
+- **Google Input Tools**: Type in native scripts easily
+- **Built-in keyboards**: Use language keyboards on your device
+- **Copy-paste**: Use Google Translate for character reference (not full translations)
+
+### Check Punctuation
+
+Different languages have different punctuation rules:
+
+- **Spanish**: ¿Question? ¡Exclamation!
+- **French**: Space before : ; ! ?
+- **German**: Use „quotes" instead of "quotes"
+
+### Consider Formality
+
+Choose appropriate formality level:
+
+| Language | Formal | Informal |
+| -------- | ------ | -------- |
+| Spanish  | usted  | tú       |
+| French   | vous   | tu       |
+| German   | Sie    | du       |
+| Hindi    | आप     | तुम      |
+
+---
+
+## Example Prompts
+
+### Customer Support (Spanish)
+
+```text
+Eres un agente de atención al cliente para Acme Corp.
+
+Tu objetivo es ayudar a los clientes con sus preguntas y resolver sus problemas de manera amable y profesional.
+
+REGLAS:
+- Siempre usa un tono amable y profesional
+- Mantén las respuestas breves y claras
+- Si no puedes resolver el problema, ofrece transferir la llamada
+- Siempre confirma que el cliente está satisfecho antes de terminar
+
+INFORMACIÓN DE LA EMPRESA:
+- Horario: Lunes a Viernes, 9:00 AM - 6:00 PM
+- Soporte técnico: soporte@acmecorp.com
+- Teléfono: +34 912 345 678
+```
+
+### Sales Agent (French)
+
+```text
+Vous êtes un agent commercial pour Acme Corp.
+
+Votre objectif est de qualifier les prospects et de présenter nos produits de manière professionnelle.
+
+RÈGLES :
+- Utilisez toujours le vouvoiement (vous)
+- Soyez courtois et professionnel
+- Posez des questions ouvertes pour comprendre les besoins
+- Ne soyez jamais insistant ou agressif
+- Proposez une démonstration si le prospect est intéressé
+
+PRODUITS :
+- Plan Starter : 99€/mois
+- Plan Business : 299€/mois
+- Plan Enterprise : Sur mesure
+```
+
+### Appointment Booking (Hindi)
+
+```text
+आप Acme Corp के लिए एक अपॉइंटमेंट बुकिंग एजेंट हैं।
+
+आपका लक्ष्य ग्राहकों के लिए अपॉइंटमेंट शेड्यूल करना है।
+
+नियम:
+- हमेशा विनम्र और पेशेवर रहें
+- ग्राहक का नाम, फोन नंबर, और पसंदीदा तारीख पूछें
+- उपलब्ध समय स्लॉट की पुष्टि करें
+- अपॉइंटमेंट की पुष्टि दें
+
+उपलब्ध समय:
+- सोमवार से शुक्रवार: सुबह 9:00 बजे से शाम 6:00 बजे तक
+- शनिवार: सुबह 10:00 बजे से दोपहर 2:00 बजे तक
+```
+
+---
+
+## Common Mistakes
+
+### Don't Use Phonetic Spelling
+
+**❌ Wrong:**
+```text
+Kaise ho? Main theek hoon.
+```
+
+**✅ Correct:**
+```text
+कैसे हो? मैं ठीक हूं।
+```
+
+### Don't Mix Languages
+
+**❌ Wrong:**
+```text
+You are a Spanish agent. Respond with "Hola, como estas?"
+```
+
+**✅ Correct:**
+```text
+Eres un agente en español. Responde con "¡Hola! ¿Cómo estás?"
+```
+
+### Don't Forget Cultural Context
+
+Consider cultural norms for:
+- Greetings and farewells
+- Formal vs. informal address
+- Business hours
+- Holidays and observances
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Supported Languages" icon="globe" href="/guides/multilingual/languages">
+    View all available languages
+  </Card>
+  
+  <Card title="Voice Settings" icon="microphone" href="/guides/multilingual/voice-settings">
+    Configure language-specific voice settings
+  </Card>
+</CardGroup>
