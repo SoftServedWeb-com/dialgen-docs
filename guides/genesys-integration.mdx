@@ -1,0 +1,105 @@
+---
+title: "Genesys Cloud Integration"
+description: "Connect Dialgen with Genesys Cloud's Audio Connector for bi-directional audio streaming"
+---
+
+## Genesys Cloud Integration
+
+Dialgen supports integration with **Genesys Cloud's Audio Connector** for seamless bi-directional audio streaming. This integration enables you to connect Dialgen's AI agents with Genesys Cloud's contact center infrastructure.
+
+### Supported Features
+
+<CardGroup cols={2}>
+  <Card title="Bi-directional Audio" icon="arrow-right-arrow-left">
+    Real-time audio exchange between Genesys Cloud and Dialgen AI agents
+  </Card>
+  <Card title="Intelligent Routing" icon="compass">
+    Automatic call routing to appropriate agents via AgentID
+  </Card>
+  <Card title="Metadata Exchange" icon="tag">
+    Support for ANI, DNIS, conversation ID, and custom metadata
+  </Card>
+  <Card title="Error Handling" icon="shield-check">
+    Graceful error handling and fallback mechanisms
+  </Card>
+</CardGroup>
+
+### Integration Status
+
+The Genesys Audio Connector integration is currently in **active development and deployment phase**.
+
+### How It Works
+
+When Genesys Cloud initiates an audio stream through the Audio Connector:
+
+1. **Authentication** - Your Genesys environment connects using provided credentials
+2. **Agent Routing** - Calls are routed to the specified Dialgen agent
+3. **Audio Processing** - The AI agent processes the incoming audio in real-time
+4. **Response Streaming** - Processed audio is streamed back to Genesys Cloud
+
+### Key Components
+
+| Component | Description |
+|-----------|-------------|
+| **ConnectorID** | Unique identifier assigned by Genesys for your integration |
+| **AgentID** | Your Dialgen agent identifier for call routing |
+| **WSS Endpoint** | WebSocket endpoint for real-time audio streaming |
+| **API Credentials** | Authentication credentials for secure connection |
+
+### Getting Started
+
+To set up Genesys Audio Connector integration, you'll need:
+
+- A Genesys Cloud account with Audio Connector enabled
+- Configured Dialgen agents ready for integration
+- Technical team access for credential exchange and setup
+
+### For Detailed Information
+
+For comprehensive integration details, including:
+- Architecture documentation
+- Configuration guidelines
+- Implementation steps
+- Testing procedures
+- Troubleshooting guides
+
+**Please contact the Dialgen team:**
+- 📧 Email: [team@dialgen.ai]
+- 💬 Slack: #dialgen-support
+- 📞 Support: [support-contact]
+
+### Frequently Asked Questions
+
+<Accordion title="What audio formats are supported?">
+PCM/G.711 @ 8000 Hz (mono) - Standard Genesys Audio Connector format with configurable options for advanced use cases.
+</Accordion>
+
+<Accordion title="What is the maximum call duration?">
+Configurable per agent, with a default of 600 seconds (10 minutes) per call.
+</Accordion>
+
+<Accordion title="How are calls authenticated?">
+Calls are authenticated using API credentials (Key + Secret) provided during setup, with additional ConnectorID validation.
+</Accordion>
+
+<Accordion title="What happens if the agent is unavailable?">
+Fallback mechanisms are in place to handle agent unavailability and ensure graceful error handling back to Genesys.
+</Accordion>
+
+<Accordion title="Can I use multiple agents?">
+Yes, you can configure multiple agents for different use cases and route calls accordingly via AgentID.
+</Accordion>
+
+### Next Steps
+
+Ready to integrate? Contact the Dialgen team to:
+1. Verify your Genesys Cloud setup
+2. Exchange authentication credentials securely
+3. Configure your agents for integration
+4. Begin testing and deployment
+
+---
+
+**Last Updated:** February 18, 2026  
+**Status:** Documentation  
+**Next Phase:** Production Deployment

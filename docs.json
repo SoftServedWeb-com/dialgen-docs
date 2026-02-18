@@ -75,6 +75,12 @@
             "pages": [
               "guides/custom-metrics-processing"
             ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "guides/genesys-integration"
+            ]
           }
         ]
       },
